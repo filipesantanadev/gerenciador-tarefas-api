@@ -11,6 +11,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "allowImportingTsExtensions": true,
     "module": "nodenext",
     "target": "esnext",
     "types": [],
