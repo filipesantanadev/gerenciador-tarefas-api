@@ -27,4 +27,4 @@
 - API RESTful documentada
 - Testes automatizados
 - Containerização com Docker
-- Frontend React/Vue
+- Frontend React
