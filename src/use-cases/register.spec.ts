@@ -3,7 +3,7 @@ import { RegisterUseCase } from './register.ts'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository.ts'
 import { compare } from 'bcryptjs'
 import { UserAlreadyExistsError } from './errors/user-already-exists-error.ts'
-import { PasswordsDoNotMatch } from './errors/passwords-do-not-match.ts'
+import { PasswordsDoNotMatchError } from './errors/passwords-do-not-match.ts'
 
 let usersRepository: InMemoryUsersRepository
 let sut: RegisterUseCase
@@ -70,6 +70,6 @@ describe('Register Use Case', () => {
         password: '123456',
         confirmPassword: '123123',
       }),
-    ).rejects.toBeInstanceOf(PasswordsDoNotMatch)
+    ).rejects.toBeInstanceOf(PasswordsDoNotMatchError)
   })
 })

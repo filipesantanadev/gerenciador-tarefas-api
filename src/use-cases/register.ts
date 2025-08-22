@@ -2,7 +2,7 @@ import type { UsersRepository } from '@/repositories/users-repository.ts'
 import { hash } from 'bcryptjs'
 import { UserAlreadyExistsError } from './errors/user-already-exists-error.ts'
 import type { User } from 'generated/prisma/index.js'
-import { PasswordsDoNotMatch } from './errors/passwords-do-not-match.ts'
+import { PasswordsDoNotMatchError } from './errors/passwords-do-not-match.ts'
 
 interface RegisterUseCaseRequest {
   name: string
@@ -25,7 +25,7 @@ export class RegisterUseCase {
     confirmPassword,
   }: RegisterUseCaseRequest): Promise<RegisterUseCaseResponse> {
     if (password !== confirmPassword) {
-      throw new PasswordsDoNotMatch()
+      throw new PasswordsDoNotMatchError()
     }
 
     const password_hash = await hash(password, 6)
