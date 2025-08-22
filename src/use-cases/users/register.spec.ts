@@ -2,8 +2,8 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { RegisterUseCase } from './register.ts'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository.ts'
 import { compare } from 'bcryptjs'
-import { UserAlreadyExistsError } from './errors/user-already-exists-error.ts'
-import { PasswordsDoNotMatchError } from './errors/passwords-do-not-match.ts'
+import { UserAlreadyExistsError } from '../errors/user-already-exists-error.ts'
+import { PasswordsDoNotMatchError } from '../errors/passwords-do-not-match.ts'
 
 let usersRepository: InMemoryUsersRepository
 let sut: RegisterUseCase

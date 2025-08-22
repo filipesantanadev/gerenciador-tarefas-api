@@ -1,8 +1,8 @@
 import type { CategoriesRepository } from '@/repositories/categories-repository.ts'
 import type { UsersRepository } from '@/repositories/users-repository.ts'
 import type { Category } from 'generated/prisma/index.js'
-import { InvalidCredentialsError } from './errors/invalid-credentials-error.ts'
-import { CategoryAlreadyExistsError } from './errors/category-already-exists-error.ts'
+import { InvalidCredentialsError } from '../errors/invalid-credentials-error.ts'
+import { CategoryAlreadyExistsError } from '../errors/category-already-exists-error.ts'
 
 interface CreateCategoryUseCaseRequest {
   name: string

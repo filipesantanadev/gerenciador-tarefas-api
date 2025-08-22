@@ -2,12 +2,12 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository.ts'
 import { compare, hash } from 'bcryptjs'
 import { UpdateUserProfileUseCase } from './update-user-profile.ts'
-import { UserAlreadyExistsError } from './errors/user-already-exists-error.ts'
-import { InvalidCredentialsError } from './errors/invalid-credentials-error.ts'
-import { PasswordsDoNotMatchError } from './errors/passwords-do-not-match.ts'
-import { ResourceNotFoundError } from './errors/resource-not-found-error.ts'
-import { SameNewPasswordAndCurrentPasswordError } from './errors/same-new-password-and-current-password-error.ts'
-import { CurrentPasswordIsRequiredError } from './errors/current-password-is-required-error.ts'
+import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
+import { InvalidCredentialsError } from '../errors/invalid-credentials-error.ts'
+import { CurrentPasswordIsRequiredError } from '../errors/current-password-is-required-error.ts'
+import { PasswordsDoNotMatchError } from '../errors/passwords-do-not-match.ts'
+import { SameNewPasswordAndCurrentPasswordError } from '../errors/same-new-password-and-current-password-error.ts'
+import { UserAlreadyExistsError } from '../errors/user-already-exists-error.ts'
 
 let usersRepository: InMemoryUsersRepository
 let sut: UpdateUserProfileUseCase

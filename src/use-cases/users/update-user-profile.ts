@@ -1,12 +1,12 @@
 import type { UsersRepository } from '@/repositories/users-repository.ts'
 import type { User } from 'generated/prisma/index.js'
-import { ResourceNotFoundError } from './errors/resource-not-found-error.ts'
-import { PasswordsDoNotMatchError } from './errors/passwords-do-not-match.ts'
-import { UserAlreadyExistsError } from './errors/user-already-exists-error.ts'
 import { compare, hash } from 'bcryptjs'
-import { InvalidCredentialsError } from './errors/invalid-credentials-error.ts'
-import { CurrentPasswordIsRequiredError } from './errors/current-password-is-required-error.ts'
-import { SameNewPasswordAndCurrentPasswordError } from './errors/same-new-password-and-current-password-error.ts'
+import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
+import { CurrentPasswordIsRequiredError } from '../errors/current-password-is-required-error.ts'
+import { InvalidCredentialsError } from '../errors/invalid-credentials-error.ts'
+import { PasswordsDoNotMatchError } from '../errors/passwords-do-not-match.ts'
+import { SameNewPasswordAndCurrentPasswordError } from '../errors/same-new-password-and-current-password-error.ts'
+import { UserAlreadyExistsError } from '../errors/user-already-exists-error.ts'
 
 interface UpdateUserProfileUseCaseRequest {
   id: string

@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryCategoriesRepository } from '@/repositories/in-memory/in-memory-categories-repository.ts'
-import { CreateCategoryUseCase } from './create-category.ts'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository.ts'
-import { CategoryAlreadyExistsError } from './errors/category-already-exists-error.ts'
-import { InvalidCredentialsError } from './errors/invalid-credentials-error.ts'
+import { CategoryAlreadyExistsError } from '../errors/category-already-exists-error.ts'
+import { InvalidCredentialsError } from '../errors/invalid-credentials-error.ts'
+import { CreateCategoryUseCase } from './create-category.ts'
 
 let categoriesRepository: InMemoryCategoriesRepository
 let usersRepository: InMemoryUsersRepository

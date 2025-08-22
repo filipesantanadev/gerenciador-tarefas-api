@@ -1,8 +1,8 @@
 import type { UsersRepository } from '@/repositories/users-repository.ts'
 import { hash } from 'bcryptjs'
-import { UserAlreadyExistsError } from './errors/user-already-exists-error.ts'
 import type { User } from 'generated/prisma/index.js'
-import { PasswordsDoNotMatchError } from './errors/passwords-do-not-match.ts'
+import { PasswordsDoNotMatchError } from '../errors/passwords-do-not-match.ts'
+import { UserAlreadyExistsError } from '../errors/user-already-exists-error.ts'
 
 interface RegisterUseCaseRequest {
   name: string
