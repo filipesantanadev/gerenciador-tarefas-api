@@ -61,7 +61,7 @@
 
 ### **Sistema de Categorias**
 
-- [ ] Deve ser possível criar uma nova categoria
+- [x] Deve ser possível criar uma nova categoria
 - [ ] Deve ser possível listar todas as categorias do usuário
 - [ ] Deve ser possível atualizar uma categoria existente
 - [ ] Deve ser possível deletar uma categoria
@@ -99,6 +99,7 @@
 
 - [x] O usuário não deve poder se cadastrar com um e-mail duplicado
 - [x] A senha deve ter no mínimo 6 caracteres
+- [x] As senhas devem coincidir durante o registro
 - [ ] O token JWT deve expirar em 7 dias
 - [ ] Apenas usuários autenticados podem acessar as funcionalidades do sistema
 - [ ] O usuário só pode visualizar e manipular suas próprias tarefas

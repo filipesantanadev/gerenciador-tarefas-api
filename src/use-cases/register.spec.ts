@@ -3,6 +3,7 @@ import { RegisterUseCase } from './register.ts'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository.ts'
 import { compare } from 'bcryptjs'
 import { UserAlreadyExistsError } from './errors/user-already-exists-error.ts'
+import { PasswordsDoNotMatch } from './errors/passwords-do-not-match.ts'
 
 let usersRepository: InMemoryUsersRepository
 let sut: RegisterUseCase
@@ -17,6 +18,7 @@ describe('Register Use Case', () => {
       name: 'John Doe',
       email: 'johndoe@example.com',
       password: '123456',
+      confirmPassword: '123456',
     })
 
     expect(user.id).toEqual(expect.any(String))
@@ -27,6 +29,7 @@ describe('Register Use Case', () => {
       name: 'John Doe',
       email: 'johndoe@example.com',
       password: '123456',
+      confirmPassword: '123456',
     })
 
     const isPasswordCorrectlyHashed = await compare(
@@ -44,6 +47,7 @@ describe('Register Use Case', () => {
       name: 'John Doe',
       email,
       password: '123456',
+      confirmPassword: '123456',
     })
 
     await expect(() =>
@@ -51,7 +55,21 @@ describe('Register Use Case', () => {
         name: 'John Doe',
         email,
         password: '123456',
+        confirmPassword: '123456',
       }),
     ).rejects.toBeInstanceOf(UserAlreadyExistsError)
+  })
+
+  it('should not be able to register when passwords do not match', async () => {
+    const email = 'johndoe@example.com'
+
+    await expect(() =>
+      sut.execute({
+        name: 'John Doe',
+        email,
+        password: '123456',
+        confirmPassword: '123123',
+      }),
+    ).rejects.toBeInstanceOf(PasswordsDoNotMatch)
   })
 })
