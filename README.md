@@ -62,7 +62,7 @@
 ### **Sistema de Categorias**
 
 - [x] Deve ser possível criar uma nova categoria
-- [ ] Deve ser possível listar todas as categorias do usuário
+- [x] Deve ser possível listar todas as categorias do usuário
 - [ ] Deve ser possível atualizar uma categoria existente
 - [ ] Deve ser possível deletar uma categoria
 - [ ] Deve ser possível atribuir uma cor personalizada à categoria

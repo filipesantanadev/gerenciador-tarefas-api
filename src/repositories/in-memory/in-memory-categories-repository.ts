@@ -5,6 +5,14 @@ import type { CategoriesRepository } from '../categories-repository.ts'
 export class InMemoryCategoriesRepository implements CategoriesRepository {
   public items: Category[] = []
 
+  async findManyByUserId(userId: string) {
+    const categories = this.items
+      .filter((item) => item.userId === userId)
+      .sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
+
+    return categories
+  }
+
   async findByNameAndUserId(name: string, userId: string) {
     const category = this.items.find(
       (item) => item.name === name && item.userId === userId,
