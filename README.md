@@ -38,8 +38,8 @@
 - [x] Deve ser possível se cadastrar
 - [x] Deve ser possível se autenticar
 - [x] Deve ser possível obter o perfil de um usuário logado
-- [ ] Deve ser possível atualizar o perfil do usuário
-- [ ] Deve ser possível alterar a senha do usuário
+- [x] Deve ser possível atualizar o perfil do usuário
+- [x] Deve ser possível alterar a senha do usuário
 - [ ] Deve ser possível fazer logout
 
 ### **Gerenciamento de Tarefas**
