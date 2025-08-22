@@ -1,6 +1,7 @@
 import type { User, Prisma, UserRole } from 'generated/prisma/index.js'
 import type { UsersRepository } from '../users-repository.ts'
 import { randomUUID } from 'node:crypto'
+import { ResourceNotFoundError } from '@/use-cases/errors/resource-not-found-error.ts'
 
 export class InMemoryUsersRepository implements UsersRepository {
   public items: User[] = []
@@ -8,9 +9,7 @@ export class InMemoryUsersRepository implements UsersRepository {
   async findById(id: string) {
     const user = this.items.find((item) => item.id === id)
 
-    if (!user) {
-      return null
-    }
+    if (!user) return null
 
     return user
   }
@@ -18,9 +17,7 @@ export class InMemoryUsersRepository implements UsersRepository {
   async findByEmail(email: string) {
     const user = this.items.find((item) => item.email === email)
 
-    if (!user) {
-      return null
-    }
+    if (!user) return null
 
     return user
   }
@@ -28,9 +25,7 @@ export class InMemoryUsersRepository implements UsersRepository {
   async update(id: string, data: Prisma.UserUpdateInput) {
     const userIndex = this.items.findIndex((item) => item.id === id)
 
-    if (userIndex === -1) {
-      throw new Error('User not found')
-    }
+    if (userIndex === -1) throw new ResourceNotFoundError()
 
     const currentUser = this.items[userIndex]!
 
