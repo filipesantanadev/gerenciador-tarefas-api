@@ -16,15 +16,6 @@ describe('Create Category Use Case', () => {
     sut = new CreateCategoryUseCase(categoriesRepository, usersRepository)
   })
 
-  it('should not be able to create a category for non-existing user', async () => {
-    await expect(() =>
-      sut.execute({
-        name: 'Work',
-        userId: 'non-existing-user-id',
-      }),
-    ).rejects.toBeInstanceOf(InvalidCredentialsError)
-  })
-
   it('should be able to create a category', async () => {
     const user = await usersRepository.create({
       name: 'John Doe',
@@ -42,6 +33,15 @@ describe('Create Category Use Case', () => {
     expect(category.userId).toBe(user.id)
     expect(category.color).toBe('#3B82F6') // default
     expect(category.isDefault).toBe(false) // default
+  })
+
+  it('should not be able to create a category for non-existing user', async () => {
+    await expect(() =>
+      sut.execute({
+        name: 'Work',
+        userId: 'non-existing-user-id',
+      }),
+    ).rejects.toBeInstanceOf(InvalidCredentialsError)
   })
 
   it('should not be able to creata a category with same name twice', async () => {

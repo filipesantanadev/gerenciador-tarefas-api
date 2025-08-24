@@ -92,8 +92,6 @@ describe('List Categories Use Case', () => {
 
     const { categories } = await sut.execute({ userId })
 
-    console.log(categories.map((c) => c.name))
-
     expect(categories.map((c) => c.name)).toEqual(
       expect.arrayContaining(['A', 'B']),
     )
