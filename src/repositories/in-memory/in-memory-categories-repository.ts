@@ -39,7 +39,9 @@ export class InMemoryCategoriesRepository implements CategoriesRepository {
 
     if (categoryIndex === -1) throw new ResourceNotFoundError()
 
-    const currentCategory = this.items[categoryIndex]!
+    const currentCategory = this.items[categoryIndex]
+
+    if (!currentCategory) throw new ResourceNotFoundError()
 
     const updatedCategory: Category = {
       id: currentCategory.id,
@@ -62,10 +64,10 @@ export class InMemoryCategoriesRepository implements CategoriesRepository {
     const category = {
       id: randomUUID(),
       name: data.name,
-      description: data.description || null,
-      color: data.color || '#3B82F6',
-      icon: data.icon || null,
-      is_default: data.is_default || false,
+      description: data.description ?? null,
+      color: (data.color as Category['color']) ?? '#3B82F6',
+      icon: data.icon ?? null,
+      is_default: data.is_default ?? false,
       user_id: data.user_id,
       created_at: new Date(),
       updated_at: new Date(),

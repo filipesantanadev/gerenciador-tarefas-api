@@ -7,6 +7,13 @@ export default defineConfig({
     environmentMatchGlobs: [['src/http/controllers/**', 'prisma']],
     coverage: {
       all: false,
+      exclude: [
+        'node_modules/',
+        'generated/',
+        '**/prisma/**',
+        '**/.prisma/**',
+        '**/generated/prisma/**',
+      ],
     },
   },
 })

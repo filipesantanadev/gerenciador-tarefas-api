@@ -30,7 +30,7 @@ describe('Create Category Use Case', () => {
 
     expect(category.id).toEqual(expect.any(String))
     expect(category.name).toBe('Work')
-    expect(category.user_id).toBe(user.id)
+    expect(category.user_id).toEqual(user.id)
     expect(category.color).toBe('#3B82F6') // default
     expect(category.is_default).toBe(false) // default
   })
