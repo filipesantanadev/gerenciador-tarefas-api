@@ -49,8 +49,8 @@ export class CreateCategoryUseCase {
       description: description || null,
       color: color || '#3B82F6',
       icon: icon || null,
-      isDefault: isDefault || false,
-      userId,
+      is_default: isDefault || false,
+      user_id: userId,
     })
 
     return { category }

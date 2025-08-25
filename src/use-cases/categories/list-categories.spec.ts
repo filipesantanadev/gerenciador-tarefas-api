@@ -24,14 +24,14 @@ describe('List Categories Use Case', () => {
     await categoriesRepository.create({
       name: 'Work',
       color: '#3B82F6',
-      userId,
+      user_id: userId,
     })
 
     vi.setSystemTime(new Date(2025, 11, 17, 8, 0, 0))
     await categoriesRepository.create({
       name: 'Personal',
       color: '#10B981',
-      userId,
+      user_id: userId,
     })
 
     const { categories } = await sut.execute({
@@ -59,20 +59,20 @@ describe('List Categories Use Case', () => {
       await categoriesRepository.create({
         name: `Work ${i}`,
         color: '#ffffffff',
-        userId: userId1,
+        user_id: userId1,
       })
     }
 
     await categoriesRepository.create({
       name: 'Personal',
       color: '#6d196dff',
-      userId: userId2,
+      user_id: userId2,
     })
 
     const { categories } = await sut.execute({ userId: userId1 })
 
     expect(categories).toHaveLength(5)
-    expect(categories.map((c) => c.userId)).toEqual(Array(5).fill(userId1))
+    expect(categories.map((c) => c.user_id)).toEqual(Array(5).fill(userId1))
     expect(categories.map((c) => c.name)).toEqual([
       'Work 5',
       'Work 4',
@@ -87,8 +87,16 @@ describe('List Categories Use Case', () => {
     const now = new Date(2025, 11, 20, 10, 0, 0)
 
     vi.setSystemTime(now)
-    await categoriesRepository.create({ name: 'A', color: '#000', userId })
-    await categoriesRepository.create({ name: 'B', color: '#111', userId })
+    await categoriesRepository.create({
+      name: 'A',
+      color: '#000',
+      user_id: userId,
+    })
+    await categoriesRepository.create({
+      name: 'B',
+      color: '#111',
+      user_id: userId,
+    })
 
     const { categories } = await sut.execute({ userId })
 

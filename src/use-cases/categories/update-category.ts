@@ -46,7 +46,7 @@ export class UpdateCategoryUseCase {
       throw new ResourceNotFoundError()
     }
 
-    if (category.userId !== userId) {
+    if (category.user_id !== userId) {
       throw new ResourceNotFoundError()
     }
 
@@ -65,7 +65,7 @@ export class UpdateCategoryUseCase {
     if (description) updateData.description = description
     if (color) updateData.color = color
     if (icon) updateData.icon = icon
-    if (typeof isDefault === 'boolean') updateData.isDefault = isDefault
+    if (typeof isDefault === 'boolean') updateData.is_default = isDefault
 
     if (Object.keys(updateData).length === 0) {
       throw new InvalidUpdateDataError()

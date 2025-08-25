@@ -27,7 +27,7 @@ describe('Update Category Use Case', () => {
 
     const category = await categoriesRepository.create({
       name: 'Work',
-      userId: user.id,
+      user_id: user.id,
     })
 
     const updatedCategory = await sut.execute({
@@ -52,8 +52,8 @@ describe('Update Category Use Case', () => {
       description: 'Old description',
       color: '#FF0000',
       icon: '📂',
-      isDefault: false,
-      userId: user.id,
+      is_default: false,
+      user_id: user.id,
     })
 
     const { category: updated } = await sut.execute({
@@ -70,7 +70,7 @@ describe('Update Category Use Case', () => {
     expect(updated.description).toBe('New description')
     expect(updated.color).toBe('#0000FF')
     expect(updated.icon).toBe('⭐')
-    expect(updated.isDefault).toBe(true)
+    expect(updated.is_default).toBe(true)
   })
 
   it('should not be able to update category when user does not exist', async () => {
@@ -78,7 +78,7 @@ describe('Update Category Use Case', () => {
 
     const category = await categoriesRepository.create({
       name: 'Work',
-      userId,
+      user_id: userId,
     })
 
     await expect(() =>
@@ -118,8 +118,8 @@ describe('Update Category Use Case', () => {
       description: 'Work category',
       color: '#FF0000',
       icon: '📂',
-      isDefault: false,
-      userId: user.id,
+      is_default: false,
+      user_id: user.id,
     })
 
     await expect(() =>
@@ -142,8 +142,8 @@ describe('Update Category Use Case', () => {
       description: 'Work category',
       color: '#FF0000',
       icon: '📂',
-      isDefault: false,
-      userId: user.id,
+      is_default: false,
+      user_id: user.id,
     })
 
     const category = await categoriesRepository.create({
@@ -151,8 +151,8 @@ describe('Update Category Use Case', () => {
       description: 'Work category',
       color: '#fff',
       icon: '📂',
-      isDefault: true,
-      userId: user.id,
+      is_default: true,
+      user_id: user.id,
     })
 
     await expect(() =>
@@ -183,8 +183,8 @@ describe('Update Category Use Case', () => {
       description: 'Work category',
       color: '#FF0000',
       icon: '📂',
-      isDefault: false,
-      userId: user1.id,
+      is_default: false,
+      user_id: user1.id,
     })
 
     await expect(() =>

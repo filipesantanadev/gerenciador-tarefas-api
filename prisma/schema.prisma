@@ -37,17 +37,17 @@ model Category {
   description String?
   color       String  @default("#3B82F6") // hex color
   icon        String? // nome do ícone (ex: "folder", "star")
-  isDefault   Boolean @default(false)
+  is_default  Boolean @default(false)
 
   // Relacionamentos
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tasks  Task[]
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  tasks   Task[]
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  @@unique([userId, name]) // Usuário não pode ter categorias com mesmo nome
+  @@unique([user_id, name]) // Usuário não pode ter categorias com mesmo nome
   @@map("categories")
 }
 
@@ -57,20 +57,20 @@ model Task {
   description  String?
   status       TaskStatus @default(TODO)
   priority     Priority   @default(MEDIUM)
-  dueDate      DateTime?
+  due_date     DateTime?
   completed_at DateTime?
-  isArchived   Boolean    @default(false)
+  is_archived  Boolean    @default(false)
 
   // Relacionamentos
-  userId     String
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  categoryId String?
-  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  tags       Tag[]
-  comments   Comment[]
+  user_id     String
+  user        User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  category_id String?
+  category    Category? @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  tags        Tag[]
+  comments    Comment[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@map("tasks")
 }
@@ -94,10 +94,10 @@ model Comment {
   content String
 
   // Relacionamentos
-  taskId String
-  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task_id String
+  task    Task   @relation(fields: [task_id], references: [id], onDelete: Cascade)
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

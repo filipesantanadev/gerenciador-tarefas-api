@@ -16,7 +16,7 @@ export class InMemoryCategoriesRepository implements CategoriesRepository {
 
   async findManyByUserId(userId: string) {
     const categories = this.items
-      .filter((item) => item.userId === userId)
+      .filter((item) => item.user_id === userId)
       .sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
 
     return categories
@@ -24,7 +24,7 @@ export class InMemoryCategoriesRepository implements CategoriesRepository {
 
   async findByNameAndUserId(name: string, userId: string) {
     const category = this.items.find(
-      (item) => item.name === name && item.userId === userId,
+      (item) => item.name === name && item.user_id === userId,
     )
 
     if (!category) {
@@ -47,10 +47,10 @@ export class InMemoryCategoriesRepository implements CategoriesRepository {
       description: (data.description as string) ?? currentCategory.description,
       color: (data.color as string) ?? currentCategory.color,
       icon: (data.icon as string) ?? currentCategory.icon,
-      isDefault: (data.isDefault as boolean) ?? currentCategory.isDefault,
+      is_default: (data.is_default as boolean) ?? currentCategory.is_default,
       created_at: currentCategory.created_at,
       updated_at: new Date(),
-      userId: currentCategory.userId,
+      user_id: currentCategory.user_id,
     }
 
     this.items[categoryIndex] = updatedCategory
@@ -65,8 +65,8 @@ export class InMemoryCategoriesRepository implements CategoriesRepository {
       description: data.description || null,
       color: data.color || '#3B82F6',
       icon: data.icon || null,
-      isDefault: data.isDefault || false,
-      userId: data.userId,
+      is_default: data.is_default || false,
+      user_id: data.user_id,
       created_at: new Date(),
       updated_at: new Date(),
     }

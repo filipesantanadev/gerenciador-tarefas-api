@@ -30,9 +30,9 @@ describe('Create Category Use Case', () => {
 
     expect(category.id).toEqual(expect.any(String))
     expect(category.name).toBe('Work')
-    expect(category.userId).toBe(user.id)
+    expect(category.user_id).toBe(user.id)
     expect(category.color).toBe('#3B82F6') // default
-    expect(category.isDefault).toBe(false) // default
+    expect(category.is_default).toBe(false) // default
   })
 
   it('should not be able to create a category for non-existing user', async () => {
