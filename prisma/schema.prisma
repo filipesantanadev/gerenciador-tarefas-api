@@ -24,9 +24,10 @@ model User {
   updated_at    DateTime @updatedAt
 
   // Relacionamentos
-  tasks      Task[]
-  categories Category[]
-  comments   Comment[]
+  tasks        Task[]
+  categories   Category[]
+  comments     Comment[]
+  created_tags Tag[]      @relation("TagCreatedBy")
 
   @@map("users")
 }
@@ -35,8 +36,8 @@ model Category {
   id          String  @id @default(uuid())
   name        String
   description String?
-  color       String  @default("#3B82F6") // hex color
-  icon        String? // nome do ícone (ex: "folder", "star")
+  color       String  @default("#3B82F6")
+  icon        String?
   is_default  Boolean @default(false)
 
   // Relacionamentos
@@ -47,7 +48,7 @@ model Category {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  @@unique([user_id, name]) // Usuário não pode ter categorias com mesmo nome
+  @@unique([user_id, name])
   @@map("categories")
 }
 
@@ -66,7 +67,7 @@ model Task {
   user        User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
   category_id String?
   category    Category? @relation(fields: [category_id], references: [id], onDelete: SetNull)
-  tags        Tag[]
+  tags        Tag[]     @relation("TaskTags")
   comments    Comment[]
 
   created_at DateTime @default(now())
@@ -76,12 +77,16 @@ model Task {
 }
 
 model Tag {
-  id    String @id @default(uuid())
-  name  String @unique
-  color String @default("#6B7280") // hex color
+  id          String  @id @default(uuid())
+  name        String  @unique
+  color       String  @default("#6B7280") // hex color
+  description String?
+  usage_count Int     @default(0)
+  created_by  String?
 
   // Relacionamentos (many-to-many)
-  tasks Task[]
+  tasks   Task[] @relation("TaskTags")
+  creator User?  @relation("TagCreatedBy", fields: [created_by], references: [id], onDelete: SetNull)
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

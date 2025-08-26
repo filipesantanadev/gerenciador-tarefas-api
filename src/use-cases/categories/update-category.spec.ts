@@ -130,7 +130,7 @@ describe('Update Category Use Case', () => {
     ).rejects.toBeInstanceOf(InvalidUpdateDataError)
   })
 
-  it('should not update a category when name category exists', async () => {
+  it('should not update a category when same name category exists', async () => {
     const user = await usersRepository.create({
       name: 'John Doe',
       email: 'johndoe@example.com',

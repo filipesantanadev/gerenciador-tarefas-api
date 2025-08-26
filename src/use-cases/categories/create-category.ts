@@ -37,7 +37,6 @@ export class CreateCategoryUseCase {
       throw new InvalidCredentialsError()
     }
 
-    // Validar nome único por usuário
     const existingCategory =
       await this.categoriesRepository.findByNameAndUserId(name, userId)
     if (existingCategory) {
