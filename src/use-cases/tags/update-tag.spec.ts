@@ -95,7 +95,7 @@ describe('Update Tag Use Case', () => {
 
     await expect(() =>
       sut.execute({
-        id: 'not-existing-id-category',
+        id: 'not-existing-id-tag',
         description: 'Work test',
         created_by: user.id,
       }),
