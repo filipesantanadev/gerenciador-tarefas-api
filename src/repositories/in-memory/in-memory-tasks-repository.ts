@@ -1,9 +1,48 @@
 import type { Prisma, Task } from 'generated/prisma/index.js'
 import { randomUUID } from 'node:crypto'
-import type { TasksRepository } from '../tasks-repository.ts'
+import type { FindManyParams, TasksRepository } from '../tasks-repository.ts'
 
 export class InMemoryTasksRepository implements TasksRepository {
   public items: Task[] = []
+
+  async findMany(params: FindManyParams): Promise<Task[]> {
+    const {
+      userId,
+      query,
+      status,
+      categoryId,
+      priority,
+      dueDate,
+      page = 1,
+    } = params
+
+    let tasks = this.items.filter((task) => task.user_id === userId)
+
+    // filtros
+    if (query) {
+      tasks = tasks.filter((task) =>
+        task.title.toLowerCase().includes(query.toLowerCase()),
+      )
+    }
+    if (status) tasks = tasks.filter((task) => task.status === status)
+    if (categoryId)
+      tasks = tasks.filter((task) => task.category_id === categoryId)
+    if (priority) tasks = tasks.filter((task) => task.priority === priority)
+    if (dueDate) {
+      tasks = tasks.filter(
+        (task) =>
+          task.due_date?.toISOString().split('T')[0] ===
+          dueDate.toISOString().split('T')[0],
+      )
+    }
+
+    // paginação
+    const pageSize = 10
+    const startIndex = (page - 1) * pageSize
+    const endIndex = startIndex + pageSize
+
+    return tasks.slice(startIndex, endIndex)
+  }
 
   async create(data: Prisma.TaskUncheckedCreateInput) {
     const task: Task = {
