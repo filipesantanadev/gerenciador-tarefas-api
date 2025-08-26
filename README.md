@@ -44,7 +44,7 @@
 
 ### **Gerenciamento de Tarefas**
 
-- [ ] Deve ser possível criar uma nova tarefa
+- [x] Deve ser possível criar uma nova tarefa
 - [ ] Deve ser possível listar todas as tarefas do usuário
 - [ ] Deve ser possível obter os detalhes de uma tarefa específica
 - [ ] Deve ser possível atualizar uma tarefa existente
@@ -71,12 +71,13 @@
 
 ### **Sistema de Tags**
 
-- [ ] Deve ser possível criar novas tags
-- [ ] Deve ser possível listar todas as tags disponíveis
+- [x] Deve ser possível criar novas tags
+- [x] Deve ser possível listar todas as tags disponíveis
+- [x] Deve ser possível atualizar uma tag
 - [ ] Deve ser possível atribuir múltiplas tags a uma tarefa
 - [ ] Deve ser possível remover tags de uma tarefa
 - [ ] Deve ser possível filtrar tarefas por tags
-- [ ] Deve ser possível buscar tarefas que contenham uma tag específica
+- [] Deve ser possível buscar tarefas que contenham uma tag específica
 
 ### **Sistema de Comentários**
 
@@ -106,8 +107,8 @@
 
 ### **Tarefas**
 
-- [ ] Uma tarefa deve pertencer obrigatoriamente a um usuário
-- [ ] O título da tarefa é obrigatório
+- [x] Uma tarefa deve pertencer obrigatoriamente a um usuário
+- [x] O título da tarefa é obrigatório
 - [ ] Uma tarefa só pode ter uma categoria por vez
 - [ ] Uma tarefa pode ter múltiplas tags
 - [ ] Tarefas arquivadas não aparecem na listagem padrão
@@ -125,7 +126,7 @@
 
 ### **Tags**
 
-- [ ] O nome da tag deve ser único no sistema (global)
+- [x] O nome da tag deve ser único no sistema (global)
 - [ ] Tags não utilizadas por nenhuma tarefa podem ser removidas automaticamente
 - [ ] Uma tag pode ser utilizada por múltiplos usuários
 
