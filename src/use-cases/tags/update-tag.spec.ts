@@ -56,8 +56,6 @@ describe('Update Tag Use Case', () => {
       },
     })
 
-    console.log(tag.name)
-
     const { tag: updated } = await sut.execute({
       id: tag.id,
       name: 'Novo',
@@ -65,8 +63,6 @@ describe('Update Tag Use Case', () => {
       color: '#0000FF',
       created_by: user.id,
     })
-
-    console.log(updated.name)
 
     expect(updated.name).toEqual('Novo')
     expect(updated.description).toBe('New description')

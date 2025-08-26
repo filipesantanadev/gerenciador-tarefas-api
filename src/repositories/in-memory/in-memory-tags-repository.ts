@@ -14,16 +14,6 @@ export class InMemoryTagsRepository implements TagsRepository {
     return tag
   }
 
-  async findByNameAndId(name: string, id: string) {
-    const tag = this.items.find((item) => item.name === name && item.id === id)
-
-    if (!tag) {
-      return null
-    }
-
-    return tag
-  }
-
   async findByName(name: string) {
     const tag = this.items.filter((item) => item.name.includes(name))
 
@@ -62,7 +52,7 @@ export class InMemoryTagsRepository implements TagsRepository {
       color: data.color ?? '#6B7280',
       description: data.description ?? null,
       usage_count: 0,
-      created_by: data.creator?.connect?.id ?? data.creator?.create?.id ?? null,
+      created_by: data.creator?.connect?.id ?? null,
       created_at: data.created_at ? new Date(data.created_at) : new Date(),
       updated_at: data.updated_at ? new Date(data.updated_at) : new Date(),
     }
