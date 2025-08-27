@@ -5,7 +5,7 @@ import type { TasksRepository } from '@/repositories/tasks-repository.ts'
 import type { CategoriesRepository } from '@/repositories/categories-repository.ts'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
 import type { TagsRepository } from '@/repositories/tags-repository.ts'
-import { TitleIsRequireError } from '../errors/title-is-required-error.ts'
+import { TitleIsRequiredError } from '../errors/title-is-required-error.ts'
 
 interface CreateTaskUseCaseRequest {
   title: string
@@ -43,7 +43,7 @@ export class CreateTaskUseCase {
     tags,
   }: CreateTaskUseCaseRequest): Promise<CreateTaskUseCaseResponse> {
     if (!title || title.trim() === '') {
-      throw new TitleIsRequireError()
+      throw new TitleIsRequiredError()
     }
 
     const user = await this.usersRepository.findById(userId)

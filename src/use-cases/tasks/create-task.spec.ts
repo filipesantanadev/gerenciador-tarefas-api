@@ -6,7 +6,7 @@ import { InvalidCredentialsError } from '../errors/invalid-credentials-error.ts'
 import { InMemoryTagsRepository } from '@/repositories/in-memory/in-memory-tags-repository.ts'
 import { InMemoryCategoriesRepository } from '@/repositories/in-memory/in-memory-categories-repository.ts'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
-import { TitleIsRequireError } from '../errors/title-is-required-error.ts'
+import { TitleIsRequiredError } from '../errors/title-is-required-error.ts'
 
 let tasksRepository: InMemoryTasksRepository
 let usersRepository: InMemoryUsersRepository
@@ -252,6 +252,6 @@ describe('Create Task Use Case', () => {
         categoryId: 'category-1',
         tags: [],
       }),
-    ).rejects.toBeInstanceOf(TitleIsRequireError)
+    ).rejects.toBeInstanceOf(TitleIsRequiredError)
   })
 })

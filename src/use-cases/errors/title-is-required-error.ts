@@ -1,4 +1,4 @@
-export class TitleIsRequireError extends Error {
+export class TitleIsRequiredError extends Error {
   constructor() {
     super('Title is required.')
   }
