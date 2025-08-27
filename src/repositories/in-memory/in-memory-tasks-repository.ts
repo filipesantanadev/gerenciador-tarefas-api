@@ -91,14 +91,12 @@ export class InMemoryTasksRepository implements TasksRepository {
 
     this.items[taskIndex] = updatedCategory
 
-    console.log('Updating with data:', data)
-
     return updatedCategory
   }
 
   async create(data: Prisma.TaskUncheckedCreateInput) {
     const task: Task = {
-      id: randomUUID(),
+      id: data.id ?? randomUUID(),
       title: data.title,
       description: data.description ?? null,
       status: (data.status as Task['status']) ?? 'TODO',

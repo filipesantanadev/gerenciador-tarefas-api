@@ -62,7 +62,7 @@ export class InMemoryCategoriesRepository implements CategoriesRepository {
 
   async create(data: Prisma.CategoryUncheckedCreateInput) {
     const category = {
-      id: randomUUID(),
+      id: data.id ?? randomUUID(),
       name: data.name,
       description: data.description ?? null,
       color: (data.color as Category['color']) ?? '#3B82F6',

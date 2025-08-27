@@ -14,6 +14,11 @@ export class InMemoryTagsRepository implements TagsRepository {
     return tag
   }
 
+  async findManyByIds(ids: string[]) {
+    const items = this.items.filter((item) => ids.includes(item.id))
+    return items
+  }
+
   async findByName(name: string) {
     const tag = this.items.filter((item) => item.name.includes(name))
 
@@ -47,7 +52,7 @@ export class InMemoryTagsRepository implements TagsRepository {
 
   async create(data: Prisma.TagCreateInput) {
     const tag = {
-      id: randomUUID(),
+      id: data.id ?? randomUUID(),
       name: data.name,
       color: data.color ?? '#6B7280',
       description: data.description ?? null,
