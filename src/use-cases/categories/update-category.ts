@@ -51,10 +51,10 @@ export class UpdateCategoryUseCase {
     }
 
     if (name) {
-      const categoryWithSameTitle =
+      const categoryWithSameName =
         await this.categoriesRepository.findByNameAndUserId(name, user.id)
 
-      if (categoryWithSameTitle && categoryWithSameTitle.id !== id) {
+      if (categoryWithSameName && categoryWithSameName.id !== id) {
         throw new CategoryAlreadyExistsError()
       }
     }
