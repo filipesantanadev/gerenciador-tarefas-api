@@ -15,6 +15,7 @@ export interface FindManyParams {
 export interface TasksRepository {
   findById(id: string): Promise<Task | null>
   findMany(params: FindManyParams): Promise<Task[]>
+  findByCategoryId(categoryId: string): Promise<Task[]>
   update(id: string, data: Prisma.TaskUpdateInput): Promise<Task>
   create(data: Prisma.TaskUncheckedCreateInput): Promise<Task>
 }

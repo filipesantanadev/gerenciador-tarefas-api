@@ -64,7 +64,7 @@
 - [x] Deve ser possível criar uma nova categoria
 - [x] Deve ser possível listar todas as categorias do usuário
 - [x] Deve ser possível atualizar uma categoria existente
-- [ ] Deve ser possível deletar uma categoria
+- [x] Deve ser possível deletar uma categoria
 - [ ] Deve ser possível atribuir uma cor personalizada à categoria
 - [ ] Deve ser possível atribuir um ícone à categoria
 - [ ] Deve ser possível filtrar tarefas por categoria
@@ -120,7 +120,7 @@
 ### **Categorias**
 
 - [x] O nome da categoria deve ser único por usuário
-- [ ] Uma categoria só pode ser deletada se não tiver tarefas associadas
+- [x] Uma categoria só pode ser deletada se não tiver tarefas associadas
 - [ ] Ao deletar uma categoria, as tarefas associadas ficam sem categoria
 - [ ] Cada usuário deve ter pelo menos uma categoria padrão criada automaticamente
 

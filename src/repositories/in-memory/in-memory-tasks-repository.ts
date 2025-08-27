@@ -56,6 +56,10 @@ export class InMemoryTasksRepository implements TasksRepository {
     return tasks.slice(startIndex, endIndex)
   }
 
+  async findByCategoryId(categoryId: string) {
+    return this.items.filter((item) => item.category_id === categoryId)
+  }
+
   async update(id: string, data: Prisma.TaskUpdateInput) {
     const taskIndex = this.items.findIndex((item) => item.id === id)
 

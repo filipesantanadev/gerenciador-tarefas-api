@@ -34,6 +34,17 @@ export class InMemoryCategoriesRepository implements CategoriesRepository {
     return category
   }
 
+  async delete(id: string) {
+    const categoryToRemove = this.items.find((item) => item.id === id)
+
+    if (!categoryToRemove) {
+      return null
+    }
+
+    this.items = this.items.filter((item) => item.id !== id)
+    return categoryToRemove
+  }
+
   async update(id: string, data: Prisma.CategoryUpdateInput) {
     const categoryIndex = this.items.findIndex((item) => item.id === id)
 
