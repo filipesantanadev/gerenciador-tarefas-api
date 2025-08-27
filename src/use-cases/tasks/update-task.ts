@@ -3,6 +3,8 @@ import type { TasksRepository } from '@/repositories/tasks-repository.ts'
 import type { UsersRepository } from '@/repositories/users-repository.ts'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
 import { InvalidUpdateDataError } from '../errors/invalid-update-data-error.ts'
+import type { CategoriesRepository } from '@/repositories/categories-repository.ts'
+import type { TagsRepository } from '@/repositories/tags-repository.ts'
 
 interface UpdateTaskUseCaseRequest {
   id: string
@@ -14,6 +16,8 @@ interface UpdateTaskUseCaseRequest {
   completedAt?: Date | null
   isArchived?: boolean
   userId: string
+  categoryId: string | null
+  tags: { id: string }[]
 }
 
 interface UpdateTaskUseCaseResponse {
@@ -24,6 +28,8 @@ export class UpdateTaskUseCase {
   constructor(
     private tasksRepository: TasksRepository,
     private usersRepository: UsersRepository,
+    private categoriesRepository: CategoriesRepository,
+    private tagsRepository: TagsRepository,
   ) {}
 
   async execute({
@@ -36,6 +42,8 @@ export class UpdateTaskUseCase {
     completedAt,
     isArchived,
     userId,
+    categoryId,
+    tags,
   }: UpdateTaskUseCaseRequest): Promise<UpdateTaskUseCaseResponse> {
     const user = await this.usersRepository.findById(userId)
 
@@ -53,6 +61,22 @@ export class UpdateTaskUseCase {
       throw new ResourceNotFoundError()
     }
 
+    if (categoryId) {
+      const category = await this.categoriesRepository.findById(categoryId)
+      if (!category || category.user_id !== userId) {
+        throw new ResourceNotFoundError()
+      }
+    }
+
+    const tagIds = tags.map((t) => t.id)
+    const existingTags = await this.tagsRepository.findManyByIds(tagIds)
+    if (
+      existingTags.length !== tagIds.length ||
+      existingTags.some((tag) => tag.created_by && tag.created_by !== userId)
+    ) {
+      throw new ResourceNotFoundError()
+    }
+
     if (status && !Object.values(TaskStatus).includes(status)) {
       throw new InvalidUpdateDataError()
     }
@@ -63,7 +87,13 @@ export class UpdateTaskUseCase {
 
     const updateData: Record<string, unknown> = {}
 
-    if (title) updateData.title = title
+    if (title !== undefined) {
+      if (title.trim()) {
+        updateData.title = title.trim()
+      } else {
+        throw new InvalidUpdateDataError()
+      }
+    }
     if (description !== undefined) updateData.description = description
     if (status) updateData.status = status
     if (priority) updateData.priority = priority
@@ -77,7 +107,6 @@ export class UpdateTaskUseCase {
     }
 
     const updatedTask = await this.tasksRepository.update(id, updateData)
-    console.log('Use case returning task with due_date:', updatedTask.due_date)
 
     return { task: updatedTask }
   }

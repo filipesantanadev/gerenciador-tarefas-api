@@ -1,7 +1,11 @@
-import type { Priority, Tag, Task, TaskStatus } from 'generated/prisma/index.js'
+import type { Priority, Task, TaskStatus } from 'generated/prisma/index.js'
 import { InvalidCredentialsError } from '../errors/invalid-credentials-error.ts'
 import type { UsersRepository } from '@/repositories/users-repository.ts'
 import type { TasksRepository } from '@/repositories/tasks-repository.ts'
+import type { CategoriesRepository } from '@/repositories/categories-repository.ts'
+import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
+import type { TagsRepository } from '@/repositories/tags-repository.ts'
+import { TitleIsRequireError } from '../errors/title-is-required-error.ts'
 
 interface CreateTaskUseCaseRequest {
   title: string
@@ -12,7 +16,7 @@ interface CreateTaskUseCaseRequest {
   completedAt?: Date
   userId: string
   categoryId?: string
-  tags: Tag[]
+  tags: { id: string }[]
 }
 
 interface CreateTaskUseCaseResponse {
@@ -23,6 +27,8 @@ export class CreateTaskUseCase {
   constructor(
     private tasksRepository: TasksRepository,
     private usersRepository: UsersRepository,
+    private categoriesRepository: CategoriesRepository,
+    private tagsRepository: TagsRepository,
   ) {}
 
   async execute({
@@ -34,11 +40,32 @@ export class CreateTaskUseCase {
     completedAt,
     userId,
     categoryId,
+    tags,
   }: CreateTaskUseCaseRequest): Promise<CreateTaskUseCaseResponse> {
+    if (!title || title.trim() === '') {
+      throw new TitleIsRequireError()
+    }
+
     const user = await this.usersRepository.findById(userId)
 
     if (!user) {
       throw new InvalidCredentialsError()
+    }
+
+    if (categoryId) {
+      const category = await this.categoriesRepository.findById(categoryId)
+      if (!category || category.user_id !== userId) {
+        throw new ResourceNotFoundError()
+      }
+    }
+
+    const tagIds = tags.map((t) => t.id)
+    const existingTags = await this.tagsRepository.findManyByIds(tagIds)
+    if (
+      existingTags.length !== tagIds.length ||
+      existingTags.some((tag) => tag.created_by && tag.created_by !== userId)
+    ) {
+      throw new ResourceNotFoundError()
     }
 
     const task = await this.tasksRepository.create({
@@ -50,6 +77,7 @@ export class CreateTaskUseCase {
       completed_at: completedAt ?? null,
       user_id: userId,
       category_id: categoryId ?? null,
+      tags: { connect: tags.map((tag) => ({ id: tag.id })) },
     })
 
     return { task }

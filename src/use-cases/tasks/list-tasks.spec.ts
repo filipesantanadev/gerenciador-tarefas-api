@@ -122,8 +122,8 @@ describe('List Tasks Use Case', () => {
     })
 
     expect(tasks).toHaveLength(2)
-    expect(tasks[0].category_id).toBe('category-1')
-    expect(tasks[1].category_id).toBe('category-1')
+    expect(tasks[0]?.category_id).toBe('category-1')
+    expect(tasks[1]?.category_id).toBe('category-1')
   })
 
   it('should be able to filter tasks by priority', async () => {
@@ -180,7 +180,7 @@ describe('List Tasks Use Case', () => {
     await tasksRepository.create({
       title: 'Task Today 2',
       user_id: 'user-1',
-      due_date: todayInLastMinutes, // Mesmo dia, horário diferente
+      due_date: todayInLastMinutes,
     })
 
     const { tasks } = await sut.execute({
@@ -342,8 +342,6 @@ describe('List Tasks Use Case', () => {
     expect(tasks).toHaveLength(0)
   })
 
-  // ✅ TESTES DE EDGE CASES
-
   it('should be able to handle undefined/null due_date correctly', async () => {
     await tasksRepository.create({
       title: 'Task without due date',
@@ -382,7 +380,7 @@ describe('List Tasks Use Case', () => {
       query: '',
     })
 
-    expect(tasks).toHaveLength(2) // Deve retornar todas
+    expect(tasks).toHaveLength(2)
   })
 
   it('should be able to handle page 0 or negative page numbers', async () => {
@@ -393,10 +391,9 @@ describe('List Tasks Use Case', () => {
 
     const { tasks } = await sut.execute({
       userId: 'user-1',
-      page: 0, // Página inválida
+      page: 0,
     })
 
-    // Deve tratar como página 1 ou retornar vazio
     expect(Array.isArray(tasks)).toBe(true)
     expect.arrayContaining([])
   })
