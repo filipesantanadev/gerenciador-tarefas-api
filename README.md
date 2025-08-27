@@ -45,18 +45,18 @@
 ### **Gerenciamento de Tarefas**
 
 - [x] Deve ser possível criar uma nova tarefa
-- [ ] Deve ser possível listar todas as tarefas do usuário
+- [x] Deve ser possível listar todas as tarefas do usuário
 - [ ] Deve ser possível obter os detalhes de uma tarefa específica
-- [ ] Deve ser possível atualizar uma tarefa existente
+- [x] Deve ser possível atualizar uma tarefa existente
 - [ ] Deve ser possível deletar uma tarefa
-- [ ] Deve ser possível marcar uma tarefa como concluída
-- [ ] Deve ser possível arquivar tarefas antigas
-- [ ] Deve ser possível definir prioridade para as tarefas (baixa, média, alta, urgente)
-- [ ] Deve ser possível definir data de vencimento para as tarefas
-- [ ] Deve ser possível filtrar tarefas por status (a fazer, em progresso, concluída)
-- [ ] Deve ser possível filtrar tarefas por prioridade
-- [ ] Deve ser possível filtrar tarefas por data de vencimento
-- [ ] Deve ser possível buscar tarefas por título ou descrição
+- [x] Deve ser possível marcar uma tarefa como concluída
+- [x] Deve ser possível arquivar tarefas antigas
+- [x] Deve ser possível definir prioridade para as tarefas (baixa, média, alta, urgente)
+- [x] Deve ser possível definir data de vencimento para as tarefas
+- [x] Deve ser possível filtrar tarefas por status (a fazer, em progresso, concluída)
+- [x] Deve ser possível filtrar tarefas por prioridade
+- [x] Deve ser possível filtrar tarefas por data de vencimento
+- [x] Deve ser possível buscar tarefas por título ou descrição
 - [ ] Deve ser possível obter estatísticas das tarefas (total, concluídas, pendentes)
 
 ### **Sistema de Categorias**
