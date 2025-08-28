@@ -109,9 +109,9 @@
 
 - [x] Uma tarefa deve pertencer obrigatoriamente a um usuário
 - [x] O título da tarefa é obrigatório
-- [ ] Uma tarefa só pode ter uma categoria por vez
-- [ ] Uma tarefa pode ter múltiplas tags
-- [ ] Tarefas arquivadas não aparecem na listagem padrão
+- [x] Uma tarefa só pode ter uma categoria por vez
+- [x] Uma tarefa pode ter múltiplas tags
+- [x] Tarefas arquivadas não aparecem na listagem padrão
 - [ ] Ao deletar uma tarefa, todos os comentários associados devem ser removidos
 - [ ] O status da tarefa deve seguir o fluxo: A Fazer → Em Progresso → Concluída
 - [ ] Tarefas marcadas como concluídas devem ter a data de conclusão registrada automaticamente
