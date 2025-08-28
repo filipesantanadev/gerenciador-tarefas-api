@@ -3,6 +3,7 @@ import { CreateTagUseCase } from './create-tag.ts'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { TagNameCannotBeEmptyError } from '../errors/tag-name-cannot-be-empty-error-.ts'
 import { TagNameTooLongError } from '../errors/tag-name-too-long-error.ts'
+import { TagAlreadyExistsError } from '../errors/tag-already-exists-error.ts'
 
 let tagsRepository: InMemoryTagsRepository
 let sut: CreateTagUseCase
@@ -62,5 +63,21 @@ describe('Create Tag Use Case', () => {
     })
 
     expect(tag.id).toEqual(expect.any(String))
+  })
+
+  it('should not be able to create tag with duplicated name', async () => {
+    await sut.execute({
+      name: 'Test',
+      color: '#EF4444',
+      createdBy: 'user-1',
+    })
+
+    await expect(() =>
+      sut.execute({
+        name: 'Test',
+        color: '#B2A3AA',
+        createdBy: 'user-1',
+      }),
+    ).rejects.toBeInstanceOf(TagAlreadyExistsError)
   })
 })

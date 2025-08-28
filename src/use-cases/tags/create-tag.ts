@@ -2,6 +2,7 @@ import type { TagsRepository } from '@/repositories/tags-repository.ts'
 import type { Tag } from 'generated/prisma/index.js'
 import { TagNameCannotBeEmptyError } from '../errors/tag-name-cannot-be-empty-error-.ts'
 import { TagNameTooLongError } from '../errors/tag-name-too-long-error.ts'
+import { TagAlreadyExistsError } from '../errors/tag-already-exists-error.ts'
 
 interface CreateTagUseCaseRequest {
   name: string
@@ -33,8 +34,16 @@ export class CreateTagUseCase {
       throw new TagNameTooLongError(name.length, MAX_TAG_NAME_LENGTH)
     }
 
+    const trimmedName = name.trim()
+
+    const existingTag = await this.tagsRepository.findByName(trimmedName)
+
+    if (existingTag) {
+      throw new TagAlreadyExistsError()
+    }
+
     const tag = await this.tagsRepository.create({
-      name: name.trim(),
+      name: trimmedName,
       color,
       description: description?.trim() ?? null,
       ...(createdBy && {

@@ -19,10 +19,17 @@ export class InMemoryTagsRepository implements TagsRepository {
     return items
   }
 
-  async findByName(name: string) {
+  async findManyByName(name: string) {
     const tag = this.items.filter((item) => item.name.includes(name))
-
     return tag
+  }
+
+  async findByName(name: string) {
+    const tag = this.items.find(
+      (item) => item.name.toLowerCase() === name.toLowerCase(),
+    )
+
+    return tag || null
   }
 
   async update(id: string, data: Prisma.TagUpdateInput) {

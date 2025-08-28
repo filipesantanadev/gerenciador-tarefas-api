@@ -43,7 +43,7 @@ export class UpdateTagUseCase {
     }
 
     if (name) {
-      const tagsWithSameName = await this.tagsRepository.findByName(name)
+      const tagsWithSameName = await this.tagsRepository.findManyByName(name)
 
       const duplicateTag = tagsWithSameName.find(
         (tag) => tag.name === name && tag.id !== id,

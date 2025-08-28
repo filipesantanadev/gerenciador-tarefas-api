@@ -15,7 +15,7 @@ export class ListTagsUseCase {
   async execute({
     name,
   }: ListTagsUseCaseRequest): Promise<ListTagsUseCaseResponse> {
-    const tags = await this.tagsRepository.findByName(name)
+    const tags = await this.tagsRepository.findManyByName(name)
 
     return { tags }
   }
