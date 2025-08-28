@@ -8,6 +8,7 @@ export interface FindManyParams {
   priority?: string
   dueDate?: Date
   page?: number
+  includeArchived?: boolean
   orderBy?: 'createdAt' | 'dueDate' | 'priority'
   order?: 'asc' | 'desc'
 }

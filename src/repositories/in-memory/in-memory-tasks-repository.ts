@@ -19,7 +19,7 @@ export class InMemoryTasksRepository implements TasksRepository {
     return task
   }
 
-  async findMany(params: FindManyParams): Promise<Task[]> {
+  async findMany(params: FindManyParams) {
     const {
       userId,
       query,
@@ -27,10 +27,15 @@ export class InMemoryTasksRepository implements TasksRepository {
       categoryId,
       priority,
       dueDate,
+      includeArchived = false,
       page = 1,
     } = params
 
     let tasks = this.items.filter((task) => task.user_id === userId)
+
+    if (!includeArchived) {
+      tasks = tasks.filter((task) => !task.is_archived)
+    }
 
     if (query) {
       tasks = tasks.filter((task) =>

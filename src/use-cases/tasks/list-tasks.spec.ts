@@ -397,4 +397,47 @@ describe('List Tasks Use Case', () => {
     expect(Array.isArray(tasks)).toBe(true)
     expect.arrayContaining([])
   })
+
+  it('should list user tasks without archived ones by default', async () => {
+    const userId = 'user-1'
+
+    await tasksRepository.create({
+      id: 'task-1',
+      title: 'Task 1',
+      status: 'TODO',
+      priority: 'HIGH',
+      user_id: userId,
+      is_archived: false,
+      created_at: new Date(),
+      updated_at: new Date(),
+    })
+
+    await tasksRepository.create({
+      id: 'task-2',
+      title: 'Task 2',
+      status: 'DONE',
+      priority: 'LOW',
+      user_id: userId,
+      is_archived: false,
+      created_at: new Date(),
+      updated_at: new Date(),
+    })
+
+    await tasksRepository.create({
+      id: 'task-3',
+      title: 'Archived Task',
+      status: 'DONE',
+      priority: 'MEDIUM',
+      user_id: userId,
+      is_archived: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+    })
+
+    const result = await sut.execute({ userId })
+
+    expect(result.tasks).toHaveLength(2)
+    expect(result.tasks.map((t) => t.id)).toEqual(['task-1', 'task-2'])
+    expect(result.tasks.every((t) => !t.is_archived)).toBe(true)
+  })
 })
