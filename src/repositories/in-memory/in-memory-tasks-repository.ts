@@ -65,6 +65,28 @@ export class InMemoryTasksRepository implements TasksRepository {
     return this.items.filter((item) => item.category_id === categoryId)
   }
 
+  async delete(id: string) {
+    const taskIndex = this.items.findIndex(
+      (item) => item.id === id && !item.is_archived,
+    )
+
+    if (taskIndex === -1) {
+      return null
+    }
+
+    const currentTask = this.items[taskIndex]
+
+    const updatedTask: Task = {
+      ...currentTask,
+      is_archived: true,
+      updated_at: new Date(),
+    } as Task
+
+    this.items[taskIndex] = updatedTask
+
+    return updatedTask
+  }
+
   async update(id: string, data: Prisma.TaskUpdateInput) {
     const taskIndex = this.items.findIndex((item) => item.id === id)
 
