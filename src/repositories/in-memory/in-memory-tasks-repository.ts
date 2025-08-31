@@ -10,6 +10,30 @@ import { ResourceNotFoundError } from '@/use-cases/errors/resource-not-found-err
 
 export class InMemoryTasksRepository implements TasksRepository {
   public items: Task[] = []
+  public taskTags: Array<{ taskId: string; tagId: string }> = []
+
+  async addTags(taskId: string, tagIds: string[]) {
+    const task = this.items.find(
+      (item) => item.id === taskId && !item.is_archived,
+    )
+
+    if (!task) {
+      return null
+    }
+
+    for (const tagId of tagIds) {
+      const relationExists = this.taskTags.some(
+        (rel) => rel.taskId === taskId && rel.tagId === tagId,
+      )
+
+      if (!relationExists) {
+        this.taskTags.push({ taskId, tagId })
+      }
+    }
+
+    task.updated_at = new Date()
+    return task
+  }
 
   async findById(id: string) {
     const task = this.items.find((item) => item.id === id)

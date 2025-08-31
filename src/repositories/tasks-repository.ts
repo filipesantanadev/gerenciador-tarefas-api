@@ -14,6 +14,7 @@ export interface FindManyParams {
 }
 
 export interface TasksRepository {
+  addTags(taskId: string, tagIds: string[]): Promise<Task | null>
   findById(id: string): Promise<Task | null>
   findMany(params: FindManyParams): Promise<Task[]>
   findByCategoryId(categoryId: string): Promise<Task[]>

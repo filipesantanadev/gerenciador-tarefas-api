@@ -14,6 +14,18 @@ export class InMemoryTagsRepository implements TagsRepository {
     return tag
   }
 
+  async findByNameAndUserId(name: string, userId: string) {
+    const tag = this.items.find(
+      (item) => item.name === name && item.created_by === userId,
+    )
+
+    if (!tag) {
+      return null
+    }
+
+    return tag
+  }
+
   async findManyByIds(ids: string[]) {
     const items = this.items.filter((item) => ids.includes(item.id))
     return items
