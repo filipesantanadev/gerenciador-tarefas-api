@@ -6,6 +6,7 @@ import { DeleteCategoryUseCase } from './delete-category.ts'
 import { InMemoryTasksRepository } from '@/repositories/in-memory/in-memory-tasks-repository.ts'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
 import { InvalidDeleteDataError } from '../errors/invalid-delete-data-error.ts'
+import { UnauthorizedError } from '../errors/unauthorized-error.ts'
 
 let usersRepository: InMemoryUsersRepository
 let categoriesRepository: InMemoryCategoriesRepository
@@ -78,7 +79,7 @@ describe('Delete Category Use Case', () => {
         id: 'category-1',
         userId: 'user-2',
       }),
-    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+    ).rejects.toBeInstanceOf(UnauthorizedError)
   })
 
   it('should not be able to delete category if category has tasks using this categories', async () => {

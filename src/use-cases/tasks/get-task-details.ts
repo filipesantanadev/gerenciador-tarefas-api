@@ -2,6 +2,7 @@ import type { Task } from 'generated/prisma/index.js'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
 import { InvalidCredentialsError } from '../errors/invalid-credentials-error.ts'
 import type { TasksRepository } from '@/repositories/tasks-repository.ts'
+import { UnauthorizedError } from '../errors/unauthorized-error.ts'
 
 interface GetTaskDetailsUseCaseRequest {
   id: string
@@ -26,7 +27,7 @@ export class GetTaskDetailsUseCase {
     }
 
     if (userId !== task.user_id) {
-      throw new InvalidCredentialsError()
+      throw new UnauthorizedError()
     }
 
     return { task }

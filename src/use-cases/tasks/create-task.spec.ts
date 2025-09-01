@@ -7,6 +7,7 @@ import { InMemoryTagsRepository } from '@/repositories/in-memory/in-memory-tags-
 import { InMemoryCategoriesRepository } from '@/repositories/in-memory/in-memory-categories-repository.ts'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
 import { TitleIsRequiredError } from '../errors/title-is-required-error.ts'
+import { UnauthorizedError } from '../errors/unauthorized-error.ts'
 
 let tasksRepository: InMemoryTasksRepository
 let usersRepository: InMemoryUsersRepository
@@ -110,7 +111,7 @@ describe('Create Task Use Case', () => {
         categoryId: category.id,
         tags: [{ id: tag1.id }, { id: tag2.id }],
       }),
-    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+    ).rejects.toBeInstanceOf(UnauthorizedError)
   })
 
   it('should not allow creating a task with tags owned by another user', async () => {
@@ -154,7 +155,7 @@ describe('Create Task Use Case', () => {
         categoryId: category.id,
         tags: [{ id: tag1.id }, { id: tag2.id }],
       }),
-    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+    ).rejects.toBeInstanceOf(UnauthorizedError)
   })
 
   it('should set default values when optional fields are missing', async () => {
@@ -237,7 +238,7 @@ describe('Create Task Use Case', () => {
         categoryId: 'category-1',
         tags: [{ id: otherUserTag.id }],
       }),
-    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+    ).rejects.toBeInstanceOf(UnauthorizedError)
   })
 
   it('should not be able to create a task without title', async () => {

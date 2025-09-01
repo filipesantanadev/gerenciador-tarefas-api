@@ -5,6 +5,7 @@ import { InMemoryTagsRepository } from '@/repositories/in-memory/in-memory-tags-
 import { AddTagsToTaskUseCase } from './add-tags-to-task.ts'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
 import { InvalidCredentialsError } from '../errors/invalid-credentials-error.ts'
+import { UnauthorizedError } from '../errors/unauthorized-error.ts'
 
 let tasksRepository: InMemoryTasksRepository
 let usersRepository: InMemoryUsersRepository
@@ -203,7 +204,7 @@ describe('Add Tag to Task Use Case', () => {
         userId: user2.id,
         tags: [{ name: 'Some Tag' }],
       }),
-    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+    ).rejects.toBeInstanceOf(UnauthorizedError)
   })
 
   it('should not be able add tags that belong to other users', async () => {
@@ -235,7 +236,7 @@ describe('Add Tag to Task Use Case', () => {
         userId: 'user-1',
         tags: [{ id: otherUserTag.id, name: 'Other User Tag' }],
       }),
-    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+    ).rejects.toBeInstanceOf(UnauthorizedError)
   })
 
   it('should not be able add tags when tag does not exists.', async () => {

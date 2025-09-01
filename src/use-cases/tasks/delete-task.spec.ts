@@ -4,6 +4,7 @@ import { hash } from 'bcryptjs'
 import { InMemoryTasksRepository } from '@/repositories/in-memory/in-memory-tasks-repository.ts'
 import { DeleteTaskUseCase } from './delete-task.ts'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
+import { UnauthorizedError } from '../errors/unauthorized-error.ts'
 
 let usersRepository: InMemoryUsersRepository
 let tasksRepository: InMemoryTasksRepository
@@ -77,6 +78,6 @@ describe('Delete Task Use Case', () => {
         id: 'task-1',
         userId: 'user-2',
       }),
-    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+    ).rejects.toBeInstanceOf(UnauthorizedError)
   })
 })

@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryTasksRepository } from '@/repositories/in-memory/in-memory-tasks-repository.ts'
 import { GetTaskDetailsUseCase } from './get-task-details.ts'
-import { InvalidCredentialsError } from '../errors/invalid-credentials-error.ts'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
+import { UnauthorizedError } from '../errors/unauthorized-error.ts'
 
 let taskRepository: InMemoryTasksRepository
 let sut: GetTaskDetailsUseCase
@@ -53,7 +53,7 @@ describe('Get Task Details Use Case', () => {
         id: 'task-1',
         userId: 'user-2',
       }),
-    ).rejects.toBeInstanceOf(InvalidCredentialsError)
+    ).rejects.toBeInstanceOf(UnauthorizedError)
   })
 
   it('should not be able to get task details when user does not exist', async () => {
@@ -62,6 +62,6 @@ describe('Get Task Details Use Case', () => {
         id: 'task-1',
         userId: 'non-existing-user',
       }),
-    ).rejects.toBeInstanceOf(InvalidCredentialsError)
+    ).rejects.toBeInstanceOf(UnauthorizedError)
   })
 })

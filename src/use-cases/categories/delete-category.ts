@@ -4,6 +4,7 @@ import type { UsersRepository } from '@/repositories/users-repository.ts'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
 import type { TasksRepository } from '@/repositories/tasks-repository.ts'
 import { InvalidDeleteDataError } from '../errors/invalid-delete-data-error.ts'
+import { UnauthorizedError } from '../errors/unauthorized-error.ts'
 
 interface DeleteCategoryUseCaseRequest {
   id: string
@@ -38,7 +39,7 @@ export class DeleteCategoryUseCase {
     }
 
     if (category.user_id !== userId) {
-      throw new ResourceNotFoundError()
+      throw new UnauthorizedError()
     }
 
     const tasks = await this.tasksRepository.findByCategoryId(id)

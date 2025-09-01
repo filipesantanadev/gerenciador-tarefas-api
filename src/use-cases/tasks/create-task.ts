@@ -6,6 +6,7 @@ import type { CategoriesRepository } from '@/repositories/categories-repository.
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
 import type { TagsRepository } from '@/repositories/tags-repository.ts'
 import { TitleIsRequiredError } from '../errors/title-is-required-error.ts'
+import { UnauthorizedError } from '../errors/unauthorized-error.ts'
 
 interface CreateTaskUseCaseRequest {
   title: string
@@ -54,18 +55,23 @@ export class CreateTaskUseCase {
 
     if (categoryId) {
       const category = await this.categoriesRepository.findById(categoryId)
-      if (!category || category.user_id !== userId) {
+      if (!category) {
         throw new ResourceNotFoundError()
+      }
+      if (category.user_id !== userId) {
+        throw new UnauthorizedError()
       }
     }
 
     const tagIds = tags.map((t) => t.id)
     const existingTags = await this.tagsRepository.findManyByIds(tagIds)
+    if (existingTags.length !== tagIds.length) {
+      throw new ResourceNotFoundError()
+    }
     if (
-      existingTags.length !== tagIds.length ||
       existingTags.some((tag) => tag.created_by && tag.created_by !== userId)
     ) {
-      throw new ResourceNotFoundError()
+      throw new UnauthorizedError()
     }
 
     const task = await this.tasksRepository.create({

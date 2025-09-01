@@ -4,6 +4,7 @@ import type { UsersRepository } from '@/repositories/users-repository.ts'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
 import { CategoryAlreadyExistsError } from '../errors/category-already-exists-error.ts'
 import { InvalidUpdateDataError } from '../errors/invalid-update-data-error.ts'
+import { UnauthorizedError } from '../errors/unauthorized-error.ts'
 
 interface UpdateCategoryUseCaseRequest {
   id: string
@@ -47,7 +48,7 @@ export class UpdateCategoryUseCase {
     }
 
     if (category.user_id !== userId) {
-      throw new ResourceNotFoundError()
+      throw new UnauthorizedError()
     }
 
     if (name) {

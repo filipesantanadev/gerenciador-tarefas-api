@@ -4,6 +4,7 @@ import type { UsersRepository } from '@/repositories/users-repository.ts'
 import type { TasksRepository } from '@/repositories/tasks-repository.ts'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
 import type { TagsRepository } from '@/repositories/tags-repository.ts'
+import { UnauthorizedError } from '../errors/unauthorized-error.ts'
 
 interface AddTagsToTaskUseCaseRequest {
   taskId: string
@@ -41,7 +42,7 @@ export class AddTagsToTaskUseCase {
     }
 
     if (task.user_id !== userId) {
-      throw new ResourceNotFoundError()
+      throw new UnauthorizedError()
     }
 
     const resolvedTags: Tag[] = []
@@ -53,7 +54,7 @@ export class AddTagsToTaskUseCase {
         tag = await this.tagsRepository.findById(tagInput.id)
 
         if (tag && tag.created_by !== userId) {
-          throw new ResourceNotFoundError()
+          throw new UnauthorizedError()
         }
       }
 

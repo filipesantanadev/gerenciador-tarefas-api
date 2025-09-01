@@ -7,6 +7,8 @@ import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
 import { InvalidUpdateDataError } from '../errors/invalid-update-data-error.ts'
 import { InMemoryTagsRepository } from '@/repositories/in-memory/in-memory-tags-repository.ts'
 import { InMemoryCategoriesRepository } from '@/repositories/in-memory/in-memory-categories-repository.ts'
+import { UnauthorizedError } from '../errors/unauthorized-error.ts'
+import { InvalidCredentialsError } from '../errors/invalid-credentials-error.ts'
 
 let tasksRepository: InMemoryTasksRepository
 let usersRepository: InMemoryUsersRepository
@@ -225,7 +227,7 @@ describe('Update Task Use Case', () => {
         categoryId: null,
         tags: [],
       }),
-    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+    ).rejects.toBeInstanceOf(InvalidCredentialsError)
   })
 
   it('should not be able to update task if task does not exist', async () => {
@@ -260,7 +262,7 @@ describe('Update Task Use Case', () => {
         categoryId: null,
         tags: [],
       }),
-    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+    ).rejects.toBeInstanceOf(UnauthorizedError)
   })
 
   it('should not be able to update task with invalid status', async () => {
@@ -427,7 +429,7 @@ describe('Update Task Use Case', () => {
         categoryId: category.id,
         tags: [{ id: tag1.id }, { id: tag2.id }],
       }),
-    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+    ).rejects.toBeInstanceOf(UnauthorizedError)
   })
 
   it('should not be able to update a task with correct category but tag id created by other user', async () => {
@@ -479,6 +481,6 @@ describe('Update Task Use Case', () => {
         categoryId: category.id,
         tags: [{ id: tag1.id }, { id: tag2.id }],
       }),
-    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+    ).rejects.toBeInstanceOf(UnauthorizedError)
   })
 })

@@ -6,6 +6,7 @@ import { InMemoryCategoriesRepository } from '@/repositories/in-memory/in-memory
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
 import { InvalidUpdateDataError } from '../errors/invalid-update-data-error.ts'
 import { CategoryAlreadyExistsError } from '../errors/category-already-exists-error.ts'
+import { UnauthorizedError } from '../errors/unauthorized-error.ts'
 
 let usersRepository: InMemoryUsersRepository
 let categoriesRepository: InMemoryCategoriesRepository
@@ -193,6 +194,6 @@ describe('Update Category Use Case', () => {
         name: 'Updated Work',
         userId: user2.id,
       }),
-    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+    ).rejects.toBeInstanceOf(UnauthorizedError)
   })
 })
