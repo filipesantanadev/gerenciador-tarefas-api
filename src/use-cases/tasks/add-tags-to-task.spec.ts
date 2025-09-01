@@ -259,7 +259,7 @@ describe('Add Tag to Task Use Case', () => {
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
 
-  it('should not be able add tags in task when task does not exists.', async () => {
+  it('should not be able to add tag if addTag returns null.', async () => {
     const task = await tasksRepository.create({
       title: 'Test Task',
       description: 'Test Description',
