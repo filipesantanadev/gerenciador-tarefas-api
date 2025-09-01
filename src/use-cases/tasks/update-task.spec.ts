@@ -230,6 +230,18 @@ describe('Update Task Use Case', () => {
     ).rejects.toBeInstanceOf(InvalidCredentialsError)
   })
 
+  it('should not be able to update task if category does not exist', async () => {
+    await expect(
+      sut.execute({
+        id: 'task-1',
+        title: 'Updated Title',
+        userId: 'user-1',
+        categoryId: 'nonexistent-category',
+        tags: [],
+      }),
+    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+  })
+
   it('should not be able to update task if task does not exist', async () => {
     await expect(
       sut.execute({
@@ -430,6 +442,35 @@ describe('Update Task Use Case', () => {
         tags: [{ id: tag1.id }, { id: tag2.id }],
       }),
     ).rejects.toBeInstanceOf(UnauthorizedError)
+  })
+
+  it('should not be able to update a task with correct category but tag id not exists', async () => {
+    const category = await categoriesRepository.create({
+      id: 'category-1',
+      name: 'Work',
+      user_id: 'user-1',
+    })
+
+    const task = await tasksRepository.create({
+      title: 'Study JavaScript',
+      description: 'Study JavaScript for Interview',
+      status: 'TODO',
+      priority: 'HIGH',
+      due_date: new Date(),
+      user_id: 'user-1',
+      category_id: category.id,
+      tags: {},
+    })
+
+    await expect(() =>
+      sut.execute({
+        id: task.id,
+        title: 'Study JavaScript',
+        userId: 'user-1',
+        categoryId: category.id,
+        tags: [{ id: 'tag-1' }, { id: 'tag-2' }],
+      }),
+    ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
 
   it('should not be able to update a task with correct category but tag id created by other user', async () => {

@@ -221,6 +221,26 @@ describe('Create Task Use Case', () => {
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
 
+  it('should not allow creating a task if not exists category', async () => {
+    const otherUserTag = await tagsRepository.create({
+      id: 'tag-other-user',
+      name: 'OtherUserTag',
+      creator: { connect: { id: 'user-2' } },
+    })
+
+    await expect(() =>
+      sut.execute({
+        title: 'Task with tag from another user',
+        description: 'Test tag ownership',
+        status: 'TODO',
+        priority: 'HIGH',
+        userId: 'user-1',
+        categoryId: 'not-existing-category',
+        tags: [{ id: otherUserTag.id }],
+      }),
+    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+  })
+
   it('should not allow creating a task if any tag belongs to another user', async () => {
     const otherUserTag = await tagsRepository.create({
       id: 'tag-other-user',
