@@ -12,6 +12,26 @@ export class InMemoryTasksRepository implements TasksRepository {
   public items: Task[] = []
   public taskTags: Array<{ taskId: string; tagId: string }> = []
 
+  async removeTag(taskId: string, tagId: string) {
+    const task = this.items.find(
+      (item) => item.id === taskId && !item.is_archived,
+    )
+
+    if (!task) {
+      return null
+    }
+
+    const relationIndex = this.taskTags.findIndex(
+      (rel) => rel.taskId === taskId && rel.tagId === tagId,
+    )
+    if (relationIndex !== -1) {
+      this.taskTags.splice(relationIndex, 1)
+    }
+
+    task.updated_at = new Date()
+    return task
+  }
+
   async addTags(taskId: string, tagIds: string[]) {
     const task = this.items.find(
       (item) => item.id === taskId && !item.is_archived,
