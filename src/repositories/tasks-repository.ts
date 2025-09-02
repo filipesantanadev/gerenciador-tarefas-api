@@ -5,6 +5,7 @@ export interface FindManyParams {
   query?: string
   status?: string
   categoryId?: string
+  tagIds?: string[]
   priority?: string
   dueDate?: Date
   page?: number

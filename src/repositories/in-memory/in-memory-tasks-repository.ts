@@ -69,6 +69,7 @@ export class InMemoryTasksRepository implements TasksRepository {
       query,
       status,
       categoryId,
+      tagIds,
       priority,
       dueDate,
       includeArchived = false,
@@ -89,6 +90,15 @@ export class InMemoryTasksRepository implements TasksRepository {
     if (status) tasks = tasks.filter((task) => task.status === status)
     if (categoryId)
       tasks = tasks.filter((task) => task.category_id === categoryId)
+    if (tagIds && tagIds.length > 0) {
+      tasks = tasks.filter((task) => {
+        const taskTagIds = this.taskTags
+          .filter((taskTag) => taskTag.taskId === task.id)
+          .map((taskTag) => taskTag.tagId)
+
+        return tagIds.some((tagId) => taskTagIds.includes(tagId))
+      })
+    }
     if (priority) tasks = tasks.filter((task) => task.priority === priority)
     if (dueDate) {
       tasks = tasks.filter(
