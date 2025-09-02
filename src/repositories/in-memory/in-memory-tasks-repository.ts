@@ -169,6 +169,28 @@ export class InMemoryTasksRepository implements TasksRepository {
     return updatedCategory
   }
 
+  async updateWithTags(
+    id: string,
+    data: Prisma.TaskUpdateInput,
+    tagIds: string[],
+  ) {
+    const task = await this.update(id, data)
+
+    if (!task) {
+      throw new ResourceNotFoundError()
+    }
+
+    this.taskTags = this.taskTags.filter((rel) => rel.taskId !== id)
+
+    if (tagIds.length > 0) {
+      for (const tagId of tagIds) {
+        this.taskTags.push({ taskId: id, tagId })
+      }
+    }
+
+    return task
+  }
+
   async create(data: Prisma.TaskUncheckedCreateInput) {
     const task: Task = {
       id: data.id ?? randomUUID(),

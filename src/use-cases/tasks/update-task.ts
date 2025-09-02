@@ -18,8 +18,8 @@ interface UpdateTaskUseCaseRequest {
   completedAt?: Date | null
   isArchived?: boolean
   userId: string
-  categoryId: string | null
-  tags: { id: string }[]
+  categoryId?: string | null
+  tags?: { id: string }[]
 }
 
 interface UpdateTaskUseCaseResponse {
@@ -45,15 +45,49 @@ export class UpdateTaskUseCase {
     isArchived,
     userId,
     categoryId,
-    tags,
+    tags = [],
   }: UpdateTaskUseCaseRequest): Promise<UpdateTaskUseCaseResponse> {
-    const user = await this.usersRepository.findById(userId)
+    const requestFields = {
+      title,
+      description,
+      status,
+      priority,
+      dueDate,
+      completedAt,
+      isArchived,
+      categoryId,
+      tags,
+    }
+
+    const hasValidUpdates = Object.entries(requestFields).some(
+      ([key, value]) => {
+        if (key === 'tags') {
+          return Array.isArray(value) && value.length > 0
+        }
+        return value !== undefined
+      },
+    )
+
+    if (!hasValidUpdates) {
+      throw new InvalidUpdateDataError()
+    }
+
+    const tagIds = tags?.map((t) => t.id) || []
+
+    const [user, task, category, existingTags] = await Promise.all([
+      this.usersRepository.findById(userId),
+      this.tasksRepository.findById(id),
+      categoryId
+        ? this.categoriesRepository.findById(categoryId)
+        : Promise.resolve(null),
+      tagIds.length > 0
+        ? this.tagsRepository.findManyByIds(tagIds)
+        : Promise.resolve([]),
+    ])
 
     if (!user) {
       throw new InvalidCredentialsError()
     }
-
-    const task = await this.tasksRepository.findById(id)
 
     if (!task) {
       throw new ResourceNotFoundError()
@@ -63,57 +97,101 @@ export class UpdateTaskUseCase {
       throw new UnauthorizedError()
     }
 
-    if (categoryId) {
-      const category = await this.categoriesRepository.findById(categoryId)
-      if (!category) {
+    if (task.is_archived) {
+      const forbiddenUpdates = [status, title, description, priority, dueDate]
+      const hasForbiddenUpdates = forbiddenUpdates.some(
+        (val) => val !== undefined,
+      )
+      const hasTagUpdates = tags && tags.length > 0
+
+      if (hasForbiddenUpdates || hasTagUpdates) {
+        throw new InvalidUpdateDataError()
+      }
+    }
+
+    const statusFlow: Record<TaskStatus, TaskStatus[]> = {
+      TODO: ['IN_PROGRESS', 'CANCELLED'],
+      IN_PROGRESS: ['DONE', 'CANCELLED'],
+      DONE: [],
+      CANCELLED: [],
+    }
+
+    if (categoryId !== undefined) {
+      if (categoryId) {
+        if (!category) {
+          throw new ResourceNotFoundError()
+        }
+        if (category.user_id !== userId) {
+          throw new UnauthorizedError()
+        }
+      }
+    }
+
+    if (tagIds.length > 0) {
+      if (existingTags.length !== tagIds.length) {
         throw new ResourceNotFoundError()
       }
-      if (category.user_id !== userId) {
+
+      const unauthorizedTag = existingTags.find(
+        (tag) => tag.created_by && tag.created_by !== userId,
+      )
+
+      if (unauthorizedTag) {
         throw new UnauthorizedError()
       }
-    }
-
-    const tagIds = tags.map((t) => t.id)
-    const existingTags = await this.tagsRepository.findManyByIds(tagIds)
-    if (existingTags.length !== tagIds.length) {
-      throw new ResourceNotFoundError()
-    }
-    if (
-      existingTags.some((tag) => tag.created_by && tag.created_by !== userId)
-    ) {
-      throw new UnauthorizedError()
-    }
-
-    if (status && !Object.values(TaskStatus).includes(status)) {
-      throw new InvalidUpdateDataError()
-    }
-
-    if (priority && !Object.values(Priority).includes(priority)) {
-      throw new InvalidUpdateDataError()
     }
 
     const updateData: Record<string, unknown> = {}
 
     if (title !== undefined) {
-      if (title.trim()) {
+      if (typeof title === 'string' && title.trim()) {
         updateData.title = title.trim()
       } else {
         throw new InvalidUpdateDataError()
       }
     }
     if (description !== undefined) updateData.description = description
-    if (status) updateData.status = status
-    if (priority) updateData.priority = priority
-    if (dueDate !== undefined) updateData.due_date = dueDate
 
-    if (completedAt !== undefined) updateData.completed_at = completedAt
-    if (typeof isArchived === 'boolean') updateData.is_archived = isArchived
+    if (status) {
+      const allowedNextStatuses = statusFlow[task.status]
+      if (!allowedNextStatuses.includes(status)) {
+        throw new InvalidUpdateDataError()
+      }
 
-    if (Object.keys(updateData).length === 0) {
-      throw new InvalidUpdateDataError()
+      updateData.status = status
+
+      if (status === 'DONE') {
+        updateData.completed_at = completedAt ?? new Date()
+      }
     }
 
-    const updatedTask = await this.tasksRepository.update(id, updateData)
+    if (completedAt !== undefined && !status) {
+      if (task.status === 'DONE') {
+        updateData.completed_at = completedAt
+      } else {
+        throw new InvalidUpdateDataError()
+      }
+    }
+
+    if (priority) updateData.priority = priority
+
+    if (dueDate !== undefined) updateData.due_date = dueDate
+
+    if (typeof isArchived === 'boolean') updateData.is_archived = isArchived
+
+    if (categoryId !== undefined) updateData.category_id = categoryId
+
+    let updatedTask: Task
+
+    if (tags !== undefined) {
+      updatedTask = await this.tasksRepository.updateWithTags(
+        id,
+        updateData,
+        tagIds,
+      )
+    } else {
+      updatedTask = await this.tasksRepository.update(id, updateData)
+    }
 
     return { task: updatedTask }
   }

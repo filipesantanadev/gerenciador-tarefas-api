@@ -21,5 +21,10 @@ export interface TasksRepository {
   findByCategoryId(categoryId: string): Promise<Task[]>
   delete(id: string): Promise<Task | null>
   update(id: string, data: Prisma.TaskUpdateInput): Promise<Task>
+  updateWithTags(
+    id: string,
+    data: Prisma.TaskUpdateInput,
+    tagIds: string[],
+  ): Promise<Task>
   create(data: Prisma.TaskUncheckedCreateInput): Promise<Task>
 }

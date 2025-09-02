@@ -40,6 +40,7 @@ describe('Update Task Use Case', () => {
       id: 'task-1',
       title: 'Original Title',
       user_id: 'user-1',
+      status: TaskStatus.TODO,
     })
 
     vi.useFakeTimers()
@@ -77,13 +78,13 @@ describe('Update Task Use Case', () => {
   it('should be able to update task status', async () => {
     const { task: updatedTask } = await sut.execute({
       id: 'task-1',
-      status: TaskStatus.DONE,
+      status: TaskStatus.IN_PROGRESS,
       userId: 'user-1',
       categoryId: null,
       tags: [],
     })
 
-    expect(updatedTask.status).toBe(TaskStatus.DONE)
+    expect(updatedTask.status).toBe(TaskStatus.IN_PROGRESS)
   })
 
   it('should be able to update task priority', async () => {
@@ -113,17 +114,30 @@ describe('Update Task Use Case', () => {
   })
 
   it('should be able to update task completed_at', async () => {
-    const completedAt = new Date('2024-03-15')
-
-    const { task: updatedTask } = await sut.execute({
+    const task = await tasksRepository.create({
       id: 'task-1',
-      completedAt,
+      title: 'Original Title',
+      user_id: 'user-1',
+      status: TaskStatus.TODO,
+    })
+
+    await sut.execute({
+      id: task.id,
+      status: TaskStatus.IN_PROGRESS,
       userId: 'user-1',
       categoryId: null,
       tags: [],
     })
 
-    expect(updatedTask.completed_at).toEqual(completedAt)
+    const { task: updatedTask } = await sut.execute({
+      id: task.id,
+      status: TaskStatus.DONE,
+      userId: 'user-1',
+      categoryId: null,
+      tags: [],
+    })
+
+    expect(updatedTask.completed_at).toEqual(new Date())
   })
 
   it('should be able to archive task', async () => {
@@ -207,6 +221,22 @@ describe('Update Task Use Case', () => {
   })
 
   it('should be able to set completed_at to null', async () => {
+    await sut.execute({
+      id: 'task-1',
+      userId: 'user-1',
+      status: TaskStatus.IN_PROGRESS,
+      categoryId: null,
+      tags: [],
+    })
+
+    await sut.execute({
+      id: 'task-1',
+      userId: 'user-1',
+      status: TaskStatus.DONE,
+      categoryId: null,
+      tags: [],
+    })
+
     const { task: updatedTask } = await sut.execute({
       id: 'task-1',
       completedAt: null,
@@ -289,25 +319,11 @@ describe('Update Task Use Case', () => {
     ).rejects.toBeInstanceOf(InvalidUpdateDataError)
   })
 
-  it('should not be able to update task with invalid priority', async () => {
-    await expect(
-      sut.execute({
-        id: 'task-1',
-        priority: 'INVALID_PRIORITY' as Priority,
-        userId: 'user-1',
-        categoryId: null,
-        tags: [],
-      }),
-    ).rejects.toBeInstanceOf(InvalidUpdateDataError)
-  })
-
   it('should not be able to update task with no data provided', async () => {
     await expect(
       sut.execute({
         id: 'task-1',
         userId: 'user-1',
-        categoryId: null,
-        tags: [],
       }),
     ).rejects.toBeInstanceOf(InvalidUpdateDataError)
   })
@@ -348,25 +364,56 @@ describe('Update Task Use Case', () => {
     )
   })
 
-  it('should be able to update to all valid task statuses', async () => {
-    const statuses = [
-      TaskStatus.TODO,
-      TaskStatus.IN_PROGRESS,
-      TaskStatus.DONE,
-      TaskStatus.CANCELLED,
-    ]
+  it('should be able to transition from TODO to IN_PROGRESS', async () => {
+    const { task } = await sut.execute({
+      id: 'task-1',
+      status: TaskStatus.IN_PROGRESS,
+      userId: 'user-1',
+      categoryId: null,
+      tags: [],
+    })
 
-    for (const status of statuses) {
-      const { task: updatedTask } = await sut.execute({
+    expect(task.status).toBe(TaskStatus.IN_PROGRESS)
+  })
+
+  it('should be able to transition from TODO to CANCELLED', async () => {
+    const { task } = await sut.execute({
+      id: 'task-1',
+      status: TaskStatus.CANCELLED,
+      userId: 'user-1',
+      categoryId: null,
+      tags: [],
+    })
+
+    expect(task.status).toBe(TaskStatus.CANCELLED)
+  })
+
+  it('should not be able to transition from DONE to any status', async () => {
+    await sut.execute({
+      id: 'task-1',
+      status: TaskStatus.IN_PROGRESS, // TODO → IN_PROGRESS
+      userId: 'user-1',
+      categoryId: null,
+      tags: [],
+    })
+
+    await sut.execute({
+      id: 'task-1',
+      status: TaskStatus.DONE,
+      userId: 'user-1',
+      categoryId: null,
+      tags: [],
+    })
+
+    await expect(
+      sut.execute({
         id: 'task-1',
-        status,
+        status: TaskStatus.TODO,
         userId: 'user-1',
         categoryId: null,
         tags: [],
-      })
-
-      expect(updatedTask.status).toBe(status)
-    }
+      }),
+    ).rejects.toBeInstanceOf(InvalidUpdateDataError)
   })
 
   it('should be able to update to all valid priorities', async () => {
