@@ -46,9 +46,9 @@
 
 - [x] Deve ser possível criar uma nova tarefa
 - [x] Deve ser possível listar todas as tarefas do usuário
-- [ ] Deve ser possível obter os detalhes de uma tarefa específica
+- [x] Deve ser possível obter os detalhes de uma tarefa específica
 - [x] Deve ser possível atualizar uma tarefa existente
-- [ ] Deve ser possível deletar uma tarefa
+- [x] Deve ser possível deletar uma tarefa
 - [x] Deve ser possível marcar uma tarefa como concluída
 - [x] Deve ser possível arquivar tarefas antigas
 - [x] Deve ser possível definir prioridade para as tarefas (baixa, média, alta, urgente)
@@ -65,19 +65,19 @@
 - [x] Deve ser possível listar todas as categorias do usuário
 - [x] Deve ser possível atualizar uma categoria existente
 - [x] Deve ser possível deletar uma categoria
-- [ ] Deve ser possível atribuir uma cor personalizada à categoria
-- [ ] Deve ser possível atribuir um ícone à categoria
-- [ ] Deve ser possível filtrar tarefas por categoria
+- [x] Deve ser possível atribuir uma cor personalizada à categoria
+- [x] Deve ser possível atribuir um ícone à categoria
+- [x] Deve ser possível filtrar tarefas por categoria
 
 ### **Sistema de Tags**
 
 - [x] Deve ser possível criar novas tags
 - [x] Deve ser possível listar todas as tags disponíveis
 - [x] Deve ser possível atualizar uma tag
-- [ ] Deve ser possível atribuir múltiplas tags a uma tarefa
-- [ ] Deve ser possível remover tags de uma tarefa
-- [ ] Deve ser possível filtrar tarefas por tags
-- [] Deve ser possível buscar tarefas que contenham uma tag específica
+- [x] Deve ser possível atribuir múltiplas tags a uma tarefa
+- [x] Deve ser possível remover tags de uma tarefa
+- [x] Deve ser possível filtrar tarefas por tags
+- [x] Deve ser possível buscar tarefas que contenham uma tag específica
 
 ### **Sistema de Comentários**
 
@@ -113,9 +113,9 @@
 - [x] Uma tarefa pode ter múltiplas tags
 - [x] Tarefas arquivadas não aparecem na listagem padrão
 - [ ] Ao deletar uma tarefa, todos os comentários associados devem ser removidos
-- [ ] O status da tarefa deve seguir o fluxo: A Fazer → Em Progresso → Concluída
-- [ ] Tarefas marcadas como concluídas devem ter a data de conclusão registrada automaticamente
-- [ ] Não é possível alterar o status de uma tarefa arquivada
+- [x] O status da tarefa deve seguir o fluxo: A Fazer → Em Progresso → Concluída
+- [x] Tarefas marcadas como concluídas devem ter a data de conclusão registrada automaticamente
+- [x] Não é possível alterar o status de uma tarefa arquivada
 
 ### **Categorias**
 
@@ -127,8 +127,8 @@
 ### **Tags**
 
 - [x] O nome da tag deve ser único no sistema (global)
-- [ ] Tags não utilizadas por nenhuma tarefa podem ser removidas automaticamente
-- [ ] Uma tag pode ser utilizada por múltiplos usuários
+- [x] Tags não utilizadas por nenhuma tarefa podem ser removidas automaticamente
+- [x] Uma tag pode ser utilizada por múltiplos usuários
 
 ### **Comentários**
 
