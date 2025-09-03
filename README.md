@@ -81,9 +81,9 @@
 
 ### **Sistema de Comentários**
 
-- [ ] Deve ser possível adicionar comentários a uma tarefa
-- [ ] Deve ser possível listar todos os comentários de uma tarefa
-- [ ] Deve ser possível atualizar um comentário próprio
+- [x] Deve ser possível adicionar comentários a uma tarefa
+- [x] Deve ser possível listar todos os comentários de uma tarefa
+- [x] Deve ser possível atualizar um comentário próprio
 - [ ] Deve ser possível deletar um comentário próprio
 
 ### **Funcionalidades Administrativas**
