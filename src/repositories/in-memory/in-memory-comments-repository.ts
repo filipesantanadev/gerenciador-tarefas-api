@@ -53,6 +53,18 @@ export class InMemoryCommentsRepository implements CommentsRepository {
     return comments
   }
 
+  async delete(id: string) {
+    const commentToRemove = this.items.find((comment) => comment.id === id)
+
+    if (!commentToRemove) {
+      return null
+    }
+
+    this.items = this.items.filter((comment) => comment.id !== id)
+
+    return commentToRemove
+  }
+
   async addCommentToTask(data: Prisma.CommentUncheckedCreateInput) {
     const newComment: Comment = {
       id: data.id ?? randomUUID(),
