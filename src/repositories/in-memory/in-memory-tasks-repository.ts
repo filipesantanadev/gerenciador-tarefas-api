@@ -1,16 +1,24 @@
 import type {
+  Category,
   Priority,
   Prisma,
+  Tag,
   Task,
   TaskStatus,
 } from 'generated/prisma/index.js'
 import { randomUUID } from 'node:crypto'
-import type { FindManyParams, TasksRepository } from '../tasks-repository.ts'
+import type {
+  FindManyParams,
+  TasksRepository,
+  TaskWithRelations,
+} from '../tasks-repository.ts'
 import { ResourceNotFoundError } from '@/use-cases/errors/resource-not-found-error.ts'
 
 export class InMemoryTasksRepository implements TasksRepository {
   public items: Task[] = []
   public taskTags: Array<{ taskId: string; tagId: string }> = []
+  private categories: Category[] = []
+  private tags: Tag[] = []
 
   async removeTag(taskId: string, tagId: string) {
     const task = this.items.find(
@@ -82,6 +90,7 @@ export class InMemoryTasksRepository implements TasksRepository {
       tasks = tasks.filter((task) => !task.is_archived)
     }
 
+    // Apply filters
     if (query) {
       tasks = tasks.filter((task) =>
         task.title.toLowerCase().includes(query.toLowerCase()),
@@ -108,11 +117,32 @@ export class InMemoryTasksRepository implements TasksRepository {
       )
     }
 
+    // Sort by created_at descending
+    tasks = tasks.sort((a, b) => {
+      return b.created_at.getTime() - a.created_at.getTime()
+    })
+
+    // Pagination
     const pageSize = 10
     const startIndex = (page - 1) * pageSize
     const endIndex = startIndex + pageSize
 
-    return tasks.slice(startIndex, endIndex)
+    const paginatedTasks = tasks.slice(startIndex, endIndex)
+
+    // Include relations
+    const tasksWithRelations: TaskWithRelations[] = paginatedTasks.map(
+      (task) => ({
+        ...task,
+        category:
+          this.categories.find((cat) => cat.id === task.category_id) || null,
+        tags: this.taskTags
+          .filter((taskTag) => taskTag.taskId === task.id)
+          .map((taskTag) => this.tags.find((tag) => tag.id === taskTag.tagId))
+          .filter((tag): tag is Tag => tag !== undefined),
+      }),
+    )
+
+    return tasksWithRelations
   }
 
   async findByCategoryId(categoryId: string) {

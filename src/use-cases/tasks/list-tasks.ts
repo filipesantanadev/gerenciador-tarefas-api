@@ -1,11 +1,11 @@
 import type {
   FindManyParams,
   TasksRepository,
+  TaskWithRelations,
 } from '@/repositories/tasks-repository.ts'
-import type { Task } from 'generated/prisma/index.js'
 
 interface ListTasksUseCaseResponse {
-  tasks: Task[]
+  tasks: TaskWithRelations[]
 }
 
 export class ListTasksUseCase {

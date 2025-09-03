@@ -1,4 +1,4 @@
-import type { Prisma, Task } from 'generated/prisma/index.js'
+import type { Category, Prisma, Tag, Task } from 'generated/prisma/index.js'
 
 export interface FindManyParams {
   userId: string
@@ -14,11 +14,16 @@ export interface FindManyParams {
   order?: 'asc' | 'desc'
 }
 
+export interface TaskWithRelations extends Task {
+  category: Category | null
+  tags: Tag[]
+}
+
 export interface TasksRepository {
   removeTag(taskId: string, tagId: string): Promise<Task | null>
   addTags(taskId: string, tagIds: string[]): Promise<Task | null>
   findById(id: string): Promise<Task | null>
-  findMany(params: FindManyParams): Promise<Task[]>
+  findMany(params: FindManyParams): Promise<TaskWithRelations[]>
   findByCategoryId(categoryId: string): Promise<Task[]>
   delete(id: string): Promise<Task | null>
   update(id: string, data: Prisma.TaskUpdateInput): Promise<Task>
