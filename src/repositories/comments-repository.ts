@@ -5,7 +5,9 @@ type CommentWithUser = Comment & {
 }
 
 export interface CommentsRepository {
+  findById(id: string): Promise<Comment | null>
   findManyByTaskId(taskId: string): Promise<CommentWithUser[]>
+  update(id: string, data: Prisma.CommentUpdateInput): Promise<Comment | null>
   addCommentToTask(data: Prisma.CommentUncheckedCreateInput): Promise<Comment>
 }
 

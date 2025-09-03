@@ -6,6 +6,38 @@ export class InMemoryCommentsRepository implements CommentsRepository {
   public items: Comment[] = []
   public users: User[] = []
 
+  async findById(id: string) {
+    const comment = this.items.find((comment) => comment.id === id) || null
+    return comment
+  }
+
+  async update(id: string, data: Prisma.CommentUpdateInput) {
+    const commentIndex = this.items.findIndex((comment) => comment.id === id)
+
+    if (commentIndex === -1) {
+      return null
+    }
+
+    const existingComment = this.items[commentIndex]
+
+    if (!existingComment) {
+      return null
+    }
+
+    const updatedComment: Comment = {
+      id: existingComment.id,
+      content: (data.content as string) ?? existingComment.content,
+      task_id: existingComment.task_id,
+      user_id: existingComment.user_id,
+      created_at: existingComment.created_at,
+      updated_at: new Date(),
+    }
+
+    this.items[commentIndex] = updatedComment
+
+    return updatedComment
+  }
+
   async findManyByTaskId(taskId: string) {
     const comments = this.items
       .filter((comment) => comment.task_id === taskId)
