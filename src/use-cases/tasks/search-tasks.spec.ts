@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryTasksRepository } from '@/repositories/in-memory/in-memory-tasks-repository.ts'
 import { SearchTasksUseCase } from './search-tasks.ts'
 
@@ -9,12 +9,6 @@ describe('Search Tasks Use Case', () => {
   beforeEach(() => {
     tasksRepository = new InMemoryTasksRepository()
     sut = new SearchTasksUseCase(tasksRepository)
-
-    vi.useFakeTimers()
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
   })
 
   it('should be able to search tasks', async () => {
