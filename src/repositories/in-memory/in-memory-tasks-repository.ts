@@ -96,9 +96,12 @@ export class InMemoryTasksRepository implements TasksRepository {
         task.title.toLowerCase().includes(query.toLowerCase()),
       )
     }
+
     if (status) tasks = tasks.filter((task) => task.status === status)
+
     if (categoryId)
       tasks = tasks.filter((task) => task.category_id === categoryId)
+
     if (tagIds && tagIds.length > 0) {
       tasks = tasks.filter((task) => {
         const taskTagIds = this.taskTags
@@ -109,6 +112,7 @@ export class InMemoryTasksRepository implements TasksRepository {
       })
     }
     if (priority) tasks = tasks.filter((task) => task.priority === priority)
+
     if (dueDate) {
       tasks = tasks.filter(
         (task) =>
@@ -119,6 +123,65 @@ export class InMemoryTasksRepository implements TasksRepository {
 
     // Sort by created_at descending
     tasks = tasks.sort((a, b) => {
+      return b.created_at.getTime() - a.created_at.getTime()
+    })
+
+    // Pagination
+    const pageSize = 10
+    const startIndex = (page - 1) * pageSize
+    const endIndex = startIndex + pageSize
+
+    const paginatedTasks = tasks.slice(startIndex, endIndex)
+
+    // Include relations
+    const tasksWithRelations: TaskWithRelations[] = paginatedTasks.map(
+      (task) => ({
+        ...task,
+        category:
+          this.categories.find((cat) => cat.id === task.category_id) || null,
+        tags: this.taskTags
+          .filter((taskTag) => taskTag.taskId === task.id)
+          .map((taskTag) => this.tags.find((tag) => tag.id === taskTag.tagId))
+          .filter((tag): tag is Tag => tag !== undefined),
+      }),
+    )
+
+    return tasksWithRelations
+  }
+
+  async searchByText(params: FindManyParams) {
+    const { userId, query, includeArchived = false, page = 1 } = params
+
+    if (!query || query.trim().length < 2) {
+      return []
+    }
+
+    let tasks = this.items.filter((task) => task.user_id === userId)
+
+    if (!includeArchived) {
+      tasks = tasks.filter((task) => !task.is_archived)
+    }
+
+    // Full-text search simulation
+    const searchTerm = query.toLowerCase().trim()
+
+    tasks = tasks.filter((task) => {
+      const titleMatch = task.title.toLowerCase().includes(searchTerm)
+      const descriptionMatch =
+        task.description?.toLowerCase().includes(searchTerm) || false
+
+      return titleMatch || descriptionMatch
+    })
+
+    // Prioritize title matches over description matches
+    tasks = tasks.sort((a, b) => {
+      const aTitleMatch = a.title.toLowerCase().includes(searchTerm)
+      const bTitleMatch = b.title.toLowerCase().includes(searchTerm)
+
+      if (aTitleMatch && !bTitleMatch) return -1
+      if (!aTitleMatch && bTitleMatch) return 1
+
+      // If both match similarly, sort by created_at descending
       return b.created_at.getTime() - a.created_at.getTime()
     })
 

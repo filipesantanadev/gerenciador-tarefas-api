@@ -14,6 +14,13 @@ export interface FindManyParams {
   order?: 'asc' | 'desc'
 }
 
+export interface SearchTasksParams {
+  userId: string
+  query: string
+  page?: number
+  includeArchived?: boolean
+}
+
 export interface TaskWithRelations extends Task {
   category: Category | null
   tags: Tag[]
@@ -24,6 +31,7 @@ export interface TasksRepository {
   addTags(taskId: string, tagIds: string[]): Promise<Task | null>
   findById(id: string): Promise<Task | null>
   findMany(params: FindManyParams): Promise<TaskWithRelations[]>
+  searchByText(params: SearchTasksParams): Promise<TaskWithRelations[]>
   findByCategoryId(categoryId: string): Promise<Task[]>
   delete(id: string): Promise<Task | null>
   update(id: string, data: Prisma.TaskUpdateInput): Promise<Task>
