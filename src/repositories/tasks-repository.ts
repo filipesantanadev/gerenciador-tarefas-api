@@ -1,5 +1,8 @@
 import type { Category, Prisma, Tag, Task } from 'generated/prisma/index.js'
 
+type OrderableFields = 'createdAt' | 'dueDate' | 'priority'
+type ExtendedOrderableFields = OrderableFields | 'title'
+
 export interface FindManyParams {
   userId: string
   query?: string
@@ -10,7 +13,7 @@ export interface FindManyParams {
   dueDate?: Date
   page?: number
   includeArchived?: boolean
-  orderBy?: 'createdAt' | 'dueDate' | 'priority'
+  orderBy?: OrderableFields
   order?: 'asc' | 'desc'
 }
 
@@ -19,6 +22,20 @@ export interface SearchTasksParams {
   query: string
   page?: number
   includeArchived?: boolean
+}
+
+export interface AdvancedFilterParams extends Omit<FindManyParams, 'orderBy'> {
+  title?: string
+  // Date filters
+  dueDateFrom?: Date
+  dueDateTo?: Date
+  createdAfter?: Date
+  createdBefore?: Date
+
+  // Additional filters
+  orderBy?: ExtendedOrderableFields
+  hasDescription?: boolean
+  overdue?: boolean
 }
 
 export interface TaskWithRelations extends Task {
@@ -31,6 +48,9 @@ export interface TasksRepository {
   addTags(taskId: string, tagIds: string[]): Promise<Task | null>
   findById(id: string): Promise<Task | null>
   findMany(params: FindManyParams): Promise<TaskWithRelations[]>
+  findManyWithAdvanceFilters(
+    params: AdvancedFilterParams,
+  ): Promise<TaskWithRelations[]>
   searchByText(params: SearchTasksParams): Promise<TaskWithRelations[]>
   findByCategoryId(categoryId: string): Promise<Task[]>
   delete(id: string): Promise<Task | null>

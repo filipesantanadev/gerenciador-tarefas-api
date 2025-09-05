@@ -1,13 +1,14 @@
-import type {
-  Category,
-  Priority,
-  Prisma,
-  Tag,
-  Task,
+import {
   TaskStatus,
+  type Category,
+  type Priority,
+  type Prisma,
+  type Tag,
+  type Task,
 } from 'generated/prisma/index.js'
 import { randomUUID } from 'node:crypto'
 import type {
+  AdvancedFilterParams,
   FindManyParams,
   TasksRepository,
   TaskWithRelations,
@@ -131,6 +132,173 @@ export class InMemoryTasksRepository implements TasksRepository {
     const startIndex = (page - 1) * pageSize
     const endIndex = startIndex + pageSize
 
+    const paginatedTasks = tasks.slice(startIndex, endIndex)
+
+    // Include relations
+    const tasksWithRelations: TaskWithRelations[] = paginatedTasks.map(
+      (task) => ({
+        ...task,
+        category:
+          this.categories.find((cat) => cat.id === task.category_id) || null,
+        tags: this.taskTags
+          .filter((taskTag) => taskTag.taskId === task.id)
+          .map((taskTag) => this.tags.find((tag) => tag.id === taskTag.tagId))
+          .filter((tag): tag is Tag => tag !== undefined),
+      }),
+    )
+
+    return tasksWithRelations
+  }
+
+  async findManyWithAdvanceFilters(params: AdvancedFilterParams) {
+    const {
+      userId,
+      title,
+      status,
+      categoryId,
+      tagIds,
+      priority,
+      dueDateFrom,
+      dueDateTo,
+      createdAfter,
+      createdBefore,
+      hasDescription,
+      overdue,
+      includeArchived = false,
+      orderBy = 'createdAt',
+      order = 'desc',
+      page = 1,
+    } = params
+
+    let tasks = this.items.filter((task) => task.user_id === userId)
+
+    // Basic filters
+    if (title) {
+      tasks = tasks.filter((task) =>
+        task.title.toLowerCase().includes(title.toLowerCase()),
+      )
+    }
+
+    if (!includeArchived) {
+      tasks = tasks.filter((task) => !task.is_archived)
+    }
+
+    if (status) {
+      tasks = tasks.filter((task) => task.status === status)
+    }
+
+    if (categoryId) {
+      tasks = tasks.filter((task) => task.category_id === categoryId)
+    }
+
+    if (priority) {
+      tasks = tasks.filter((task) => task.priority === priority)
+    }
+
+    if (tagIds && tagIds.length > 0) {
+      tasks = tasks.filter((task) => {
+        const taskTagIds = this.taskTags
+          .filter((taskTag) => taskTag.taskId === task.id)
+          .map((taskTag) => taskTag.tagId)
+
+        return tagIds.some((tagId: string) => taskTagIds.includes(tagId))
+      })
+    }
+
+    // Date range filters
+    if (dueDateFrom) {
+      tasks = tasks.filter((task) => {
+        if (!task.due_date) return false
+        return task.due_date >= dueDateFrom
+      })
+    }
+
+    if (dueDateTo) {
+      tasks = tasks.filter((task) => {
+        if (!task.due_date) return false
+        return task.due_date <= dueDateTo
+      })
+    }
+
+    if (createdAfter) {
+      tasks = tasks.filter((task) => {
+        console.log(
+          'createdAfter:',
+          createdAfter,
+          'task.created_at:',
+          task.created_at,
+        )
+        return task.created_at >= createdAfter
+      })
+    }
+
+    if (createdBefore) {
+      tasks = tasks.filter((task) => {
+        console.log(
+          'createdBefore:',
+          createdBefore,
+          'task.created_at:',
+          task.created_at,
+        )
+        return task.created_at <= createdBefore
+      })
+    }
+
+    // Additional filters
+    if (hasDescription !== undefined) {
+      tasks = tasks.filter((task) => {
+        const taskHasDescription = Boolean(
+          task.description && task.description.trim().length > 0,
+        )
+        return taskHasDescription === hasDescription
+      })
+    }
+
+    if (overdue) {
+      const now = new Date()
+      tasks = tasks.filter((task) => {
+        if (!task.due_date) return false
+        return task.due_date < now && task.status !== 'DONE'
+      })
+    }
+
+    // Sorting
+    tasks = tasks.sort((a, b) => {
+      let comparison = 0
+
+      switch (orderBy) {
+        case 'createdAt':
+          comparison = a.created_at.getTime() - b.created_at.getTime()
+          break
+        case 'dueDate':
+          if (!a.due_date && !b.due_date) comparison = 0
+          else if (!a.due_date) comparison = 1
+          else if (!b.due_date) comparison = -1
+          else comparison = a.due_date.getTime() - b.due_date.getTime()
+          break
+        case 'priority': {
+          const priorityOrder = { URGENT: 4, HIGH: 3, MEDIUM: 2, LOW: 1 }
+          const aPriority =
+            priorityOrder[a.priority as keyof typeof priorityOrder] || 0
+          const bPriority =
+            priorityOrder[b.priority as keyof typeof priorityOrder] || 0
+          comparison = aPriority - bPriority
+          break
+        }
+        case 'title':
+          comparison = a.title.localeCompare(b.title)
+          break
+        default:
+          comparison = b.created_at.getTime() - a.created_at.getTime()
+      }
+
+      return order === 'asc' ? comparison : -comparison
+    })
+
+    // Pagination
+    const pageSize = 10
+    const startIndex = (page - 1) * pageSize
+    const endIndex = startIndex + pageSize
     const paginatedTasks = tasks.slice(startIndex, endIndex)
 
     // Include relations
@@ -306,7 +474,7 @@ export class InMemoryTasksRepository implements TasksRepository {
       is_archived: data.is_archived ?? false,
       user_id: data.user_id,
       category_id: data.category_id ?? null,
-      created_at: new Date(),
+      created_at: data.created_at ? new Date(data.created_at) : new Date(),
       updated_at: new Date(),
     }
 
