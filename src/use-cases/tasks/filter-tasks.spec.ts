@@ -407,7 +407,7 @@ describe('Filter Tasks Use Case', () => {
     const tomorrow = new Date(today)
     tomorrow.setDate(today.getDate() + 1)
 
-    const t1 = await tasksRepository.create({
+    await tasksRepository.create({
       id: 'task-1',
       title: 'Important Work Task',
       user_id: 'user-1',
@@ -419,8 +419,6 @@ describe('Filter Tasks Use Case', () => {
       is_archived: false,
       created_at: new Date(),
     })
-
-    console.log('t1', t1)
 
     await tasksRepository.create({
       id: 'task-2',
@@ -443,8 +441,6 @@ describe('Filter Tasks Use Case', () => {
       hasDescription: true,
       page: 1,
     })
-
-    console.log({ tasks })
 
     expect(tasks).toHaveLength(1)
     expect(tasks).toEqual([
