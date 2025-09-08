@@ -72,6 +72,10 @@ export class InMemoryTasksRepository implements TasksRepository {
     return task
   }
 
+  async findManyByCategoryId(categoryId: string) {
+    return this.items.filter((item) => item.category_id === categoryId)
+  }
+
   async findMany(params: FindManyParams) {
     const {
       userId,
