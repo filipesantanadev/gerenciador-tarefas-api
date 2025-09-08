@@ -380,10 +380,6 @@ export class InMemoryTasksRepository implements TasksRepository {
     return tasksWithRelations
   }
 
-  async findByCategoryId(categoryId: string) {
-    return this.items.filter((item) => item.category_id === categoryId)
-  }
-
   async delete(id: string) {
     const taskIndex = this.items.findIndex(
       (item) => item.id === id && !item.is_archived,

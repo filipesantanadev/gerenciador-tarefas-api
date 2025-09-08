@@ -53,7 +53,6 @@ export interface TasksRepository {
     params: AdvancedFilterParams,
   ): Promise<TaskWithRelations[]>
   searchByText(params: SearchTasksParams): Promise<TaskWithRelations[]>
-  findByCategoryId(categoryId: string): Promise<Task[]>
   delete(id: string): Promise<Task | null>
   update(id: string, data: Prisma.TaskUpdateInput): Promise<Task>
   updateWithTags(

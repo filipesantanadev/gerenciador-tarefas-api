@@ -42,7 +42,7 @@ export class DeleteCategoryUseCase {
       throw new UnauthorizedError()
     }
 
-    const tasks = await this.tasksRepository.findByCategoryId(id)
+    const tasks = await this.tasksRepository.findManyByCategoryId(id)
     if (tasks.length > 0) {
       // TODO: Implementar depois o 'Soft Delete' ou 'Reatribuição de Tarefas'
       throw new InvalidDeleteDataError()
