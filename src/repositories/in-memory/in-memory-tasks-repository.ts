@@ -15,11 +15,23 @@ import type {
 } from '../tasks-repository.ts'
 import { ResourceNotFoundError } from '@/use-cases/errors/resource-not-found-error.ts'
 
+interface TaskCreateWithTagsInput extends Prisma.TaskUncheckedCreateInput {
+  tags?: {
+    connect?: { id: string } | { id: string }[]
+  }
+}
+
 export class InMemoryTasksRepository implements TasksRepository {
   public items: Task[] = []
   public taskTags: Array<{ taskId: string; tagId: string }> = []
-  private categories: Category[] = []
-  private tags: Tag[] = []
+
+  constructor(
+    private tags: Tag[] = [],
+    private categories: Category[] = [],
+  ) {
+    this.tags = tags
+    this.categories = categories
+  }
 
   async removeTag(taskId: string, tagId: string) {
     const task = this.items.find(
@@ -74,6 +86,34 @@ export class InMemoryTasksRepository implements TasksRepository {
 
   async findManyByCategoryId(categoryId: string) {
     return this.items.filter((item) => item.category_id === categoryId)
+  }
+
+  async findManyByTagId(tagId: string) {
+    const taskIdsWithTag = this.taskTags
+      .filter((relation) => relation.tagId === tagId)
+      .map((relation) => relation.taskId)
+
+    return this.items
+      .filter((task) => taskIdsWithTag.includes(task.id))
+      .map((task) => this.populateTaskRelations(task))
+  }
+
+  private populateTaskRelations(task: Task): TaskWithRelations {
+    const category = task.category_id
+      ? this.categories.find((cat) => cat.id === task.category_id) || null
+      : null
+
+    const taskTagIds = this.taskTags
+      .filter((relation) => relation.taskId === task.id)
+      .map((relation) => relation.tagId)
+
+    const tags = this.tags.filter((tag) => taskTagIds.includes(tag.id))
+
+    return {
+      ...task,
+      category,
+      tags,
+    }
   }
 
   async findMany(params: FindManyParams) {
@@ -226,24 +266,12 @@ export class InMemoryTasksRepository implements TasksRepository {
 
     if (createdAfter) {
       tasks = tasks.filter((task) => {
-        console.log(
-          'createdAfter:',
-          createdAfter,
-          'task.created_at:',
-          task.created_at,
-        )
         return task.created_at >= createdAfter
       })
     }
 
     if (createdBefore) {
       tasks = tasks.filter((task) => {
-        console.log(
-          'createdBefore:',
-          createdBefore,
-          'task.created_at:',
-          task.created_at,
-        )
         return task.created_at <= createdBefore
       })
     }
@@ -462,7 +490,7 @@ export class InMemoryTasksRepository implements TasksRepository {
     return task
   }
 
-  async create(data: Prisma.TaskUncheckedCreateInput) {
+  async create(data: TaskCreateWithTagsInput) {
     const task: Task = {
       id: data.id ?? randomUUID(),
       title: data.title,
@@ -479,6 +507,20 @@ export class InMemoryTasksRepository implements TasksRepository {
     }
 
     this.items.push(task)
+
+    if (data.tags?.connect) {
+      const connections = Array.isArray(data.tags.connect)
+        ? data.tags.connect
+        : [data.tags.connect]
+
+      connections.forEach((connection) => {
+        this.taskTags.push({
+          taskId: task.id,
+          tagId: connection.id,
+        })
+      })
+    }
+
     return task
   }
 }

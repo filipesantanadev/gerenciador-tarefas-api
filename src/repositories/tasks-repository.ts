@@ -48,6 +48,7 @@ export interface TasksRepository {
   addTags(taskId: string, tagIds: string[]): Promise<Task | null>
   findById(id: string): Promise<Task | null>
   findManyByCategoryId(categoryId: string): Promise<Task[]>
+  findManyByTagId(tagId: string): Promise<TaskWithRelations[]>
   findMany(params: FindManyParams): Promise<TaskWithRelations[]>
   findManyWithAdvanceFilters(
     params: AdvancedFilterParams,

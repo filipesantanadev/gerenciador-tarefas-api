@@ -5,6 +5,9 @@ import { ResourceNotFoundError } from '@/use-cases/errors/resource-not-found-err
 
 export class InMemoryTagsRepository implements TagsRepository {
   public items: Tag[] = []
+  constructor(tags: Tag[] = []) {
+    this.items = tags
+  }
 
   async findById(id: string) {
     const tag = this.items.find((item) => item.id === id)
