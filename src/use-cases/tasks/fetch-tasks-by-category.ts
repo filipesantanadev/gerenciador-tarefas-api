@@ -5,6 +5,7 @@ import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
 
 interface FetchTasksByCategoryUseCaseRequest {
   categoryId: string
+  page: number
 }
 
 interface FetchTasksByCategoryUseCaseResponse {
@@ -19,6 +20,7 @@ export class FetchTasksByCategoryUseCase {
 
   async execute({
     categoryId,
+    page,
   }: FetchTasksByCategoryUseCaseRequest): Promise<FetchTasksByCategoryUseCaseResponse> {
     if (!categoryId) {
       throw new ResourceNotFoundError()
@@ -30,8 +32,10 @@ export class FetchTasksByCategoryUseCase {
       throw new ResourceNotFoundError()
     }
 
-    const tasksByCategory =
-      await this.tasksRepository.findManyByCategoryId(categoryId)
+    const tasksByCategory = await this.tasksRepository.findManyByCategoryId(
+      categoryId,
+      page,
+    )
 
     return { tasks: tasksByCategory }
   }

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryTasksRepository } from '@/repositories/in-memory/in-memory-tasks-repository.ts'
 import { FetchTasksByCategoryUseCase } from './fetch-tasks-by-category.ts'
 import { InMemoryCategoriesRepository } from '@/repositories/in-memory/in-memory-categories-repository.ts'
@@ -13,12 +13,6 @@ describe('Fetch Tasks by Category Use Case', () => {
     tasksRepository = new InMemoryTasksRepository()
     categoriesRepository = new InMemoryCategoriesRepository()
     sut = new FetchTasksByCategoryUseCase(tasksRepository, categoriesRepository)
-
-    vi.useFakeTimers()
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
   })
 
   it('should be able to fetch tasks by category', async () => {
@@ -60,7 +54,10 @@ describe('Fetch Tasks by Category Use Case', () => {
 
     const { tasks } = await sut.execute({
       categoryId: 'category-1',
+      page: 1,
     })
+
+    console.log(tasks)
 
     expect(tasks).toHaveLength(3)
   })
@@ -69,6 +66,7 @@ describe('Fetch Tasks by Category Use Case', () => {
     await expect(() =>
       sut.execute({
         categoryId: '',
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
@@ -77,6 +75,7 @@ describe('Fetch Tasks by Category Use Case', () => {
     await expect(() =>
       sut.execute({
         categoryId: 'category-1',
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })

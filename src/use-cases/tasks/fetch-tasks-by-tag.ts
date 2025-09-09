@@ -7,6 +7,7 @@ import type { TagsRepository } from '@/repositories/tags-repository.ts'
 
 interface FetchTasksByTagUseCaseRequest {
   tagId: string
+  page: number
 }
 
 interface FetchTasksByTagUseCaseResponse {
@@ -21,6 +22,7 @@ export class FetchTasksByTagUseCase {
 
   async execute({
     tagId,
+    page,
   }: FetchTasksByTagUseCaseRequest): Promise<FetchTasksByTagUseCaseResponse> {
     if (tagId.trim() === '') {
       throw new ResourceNotFoundError()
@@ -32,7 +34,7 @@ export class FetchTasksByTagUseCase {
       throw new ResourceNotFoundError()
     }
 
-    const tasksByTag = await this.tasksRepository.findManyByTagId(tagId)
+    const tasksByTag = await this.tasksRepository.findManyByTagId(tagId, page)
 
     return { tasks: tasksByTag }
   }

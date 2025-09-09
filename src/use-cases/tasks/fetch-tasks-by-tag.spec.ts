@@ -59,6 +59,7 @@ describe('Fetch Tasks by Tag Use Case', () => {
 
     const { tasks } = await sut.execute({
       tagId: 'tag-1',
+      page: 1,
     })
 
     expect(tasks).toHaveLength(3)
@@ -68,6 +69,7 @@ describe('Fetch Tasks by Tag Use Case', () => {
     await expect(() =>
       sut.execute({
         tagId: '',
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
@@ -76,6 +78,7 @@ describe('Fetch Tasks by Tag Use Case', () => {
     await expect(() =>
       sut.execute({
         tagId: 'tag-1',
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
