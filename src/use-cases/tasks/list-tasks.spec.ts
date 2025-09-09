@@ -243,37 +243,30 @@ describe('List Tasks Use Case', () => {
       })
     }
 
-    // Primeira página (10 itens)
+    // Primeira página (20 itens)
     const page1 = await sut.execute({
       userId: 'user-1',
       page: 1,
     })
-    expect(page1.tasks).toHaveLength(10)
+    expect(page1.tasks).toHaveLength(20)
 
-    // Segunda página (10 itens)
+    // Segunda página (5 itens)
     const page2 = await sut.execute({
       userId: 'user-1',
       page: 2,
     })
-    expect(page2.tasks).toHaveLength(10)
-
-    // Terceira página (5 itens)
-    const page3 = await sut.execute({
-      userId: 'user-1',
-      page: 3,
-    })
-    expect(page3.tasks).toHaveLength(5)
+    expect(page2.tasks).toHaveLength(5)
 
     // Página inexistente
     const page4 = await sut.execute({
       userId: 'user-1',
-      page: 4,
+      page: 3,
     })
     expect(page4.tasks).toHaveLength(0)
   })
 
   it('should be able to handle exact page size boundary', async () => {
-    for (let i = 1; i <= 20; i++) {
+    for (let i = 1; i <= 25; i++) {
       await tasksRepository.create({
         title: `Task ${i}`,
         user_id: 'user-1',
@@ -285,7 +278,7 @@ describe('List Tasks Use Case', () => {
       page: 2,
     })
 
-    expect(page2.tasks).toHaveLength(10)
+    expect(page2.tasks).toHaveLength(5)
   })
 
   it('should be able to case insensitive when searching by query', async () => {

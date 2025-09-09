@@ -89,7 +89,7 @@ describe('Search Tasks Use Case', () => {
     const { tasks } = await sut.execute({
       userId: 'user-1',
       query: 'Task',
-      page: 3,
+      page: 2,
     })
 
     expect(tasks).toHaveLength(2)

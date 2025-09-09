@@ -94,7 +94,7 @@ export class InMemoryTasksRepository implements TasksRepository {
   async findManyByCategoryId(categoryId: string, page: number) {
     return this.items
       .filter((item) => item.category_id === categoryId)
-      .slice((page - 1) * 10, page * 10)
+      .slice((page - 1) * 20, page * 20)
   }
 
   async findManyByTagId(tagId: string) {
@@ -181,7 +181,7 @@ export class InMemoryTasksRepository implements TasksRepository {
     })
 
     // Pagination
-    const pageSize = 10
+    const pageSize = 20
     const startIndex = (page - 1) * pageSize
     const endIndex = startIndex + pageSize
 
@@ -337,7 +337,7 @@ export class InMemoryTasksRepository implements TasksRepository {
     })
 
     // Pagination
-    const pageSize = 10
+    const pageSize = 20
     const startIndex = (page - 1) * pageSize
     const endIndex = startIndex + pageSize
     const paginatedTasks = tasks.slice(startIndex, endIndex)
@@ -395,7 +395,7 @@ export class InMemoryTasksRepository implements TasksRepository {
     })
 
     // Pagination
-    const pageSize = 10
+    const pageSize = 20
     const startIndex = (page - 1) * pageSize
     const endIndex = startIndex + pageSize
 

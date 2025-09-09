@@ -116,8 +116,10 @@ describe('Filter Tasks Use Case', () => {
 
     const { tasks } = await sut.execute({
       userId: 'user-1',
-      page: 3,
+      page: 2,
     })
+
+    console.log({ tasks })
 
     expect(tasks).toHaveLength(2)
     expect(tasks[0]?.title).toEqual('Task 21')
@@ -335,7 +337,7 @@ describe('Filter Tasks Use Case', () => {
 
     const { tasks } = await sut.execute({
       userId: 'user-1',
-      page: 3,
+      page: 2,
     })
 
     expect(tasks).toHaveLength(2)
