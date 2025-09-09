@@ -76,6 +76,13 @@ export class InMemoryTasksRepository implements TasksRepository {
     return task
   }
 
+  async existsByCategoryId(categoryId: string) {
+    const taskExists = this.items.some(
+      (task) => task.category_id === categoryId,
+    )
+    return taskExists
+  }
+
   async findById(id: string) {
     const task = this.items.find((item) => item.id === id)
 
@@ -84,8 +91,10 @@ export class InMemoryTasksRepository implements TasksRepository {
     return task
   }
 
-  async findManyByCategoryId(categoryId: string) {
-    return this.items.filter((item) => item.category_id === categoryId)
+  async findManyByCategoryId(categoryId: string, page: number) {
+    return this.items
+      .filter((item) => item.category_id === categoryId)
+      .slice((page - 1) * 10, page * 10)
   }
 
   async findManyByTagId(tagId: string) {
