@@ -20,6 +20,7 @@ interface UpdateTaskUseCaseRequest {
   userId: string
   categoryId?: string | null
   tags?: { id: string }[]
+  page: number
 }
 
 interface UpdateTaskUseCaseResponse {
@@ -46,6 +47,7 @@ export class UpdateTaskUseCase {
     userId,
     categoryId,
     tags = [],
+    page,
   }: UpdateTaskUseCaseRequest): Promise<UpdateTaskUseCaseResponse> {
     const requestFields = {
       title,
@@ -81,7 +83,7 @@ export class UpdateTaskUseCase {
         ? this.categoriesRepository.findById(categoryId)
         : Promise.resolve(null),
       tagIds.length > 0
-        ? this.tagsRepository.findManyByIds(tagIds)
+        ? this.tagsRepository.findManyByIds(tagIds, page)
         : Promise.resolve([]),
     ])
 

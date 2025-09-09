@@ -29,6 +29,7 @@ describe('List Tags Use Case', () => {
 
     const { tags } = await sut.execute({
       name: 'Urgente',
+      page: 1,
     })
 
     expect(tags).toHaveLength(2)
@@ -37,6 +38,7 @@ describe('List Tags Use Case', () => {
   it('should not be able to list tags when tag not exists', async () => {
     const { tags } = await sut.execute({
       name: 'Teste',
+      page: 1,
     })
 
     expect(tags).toEqual([])
@@ -60,6 +62,7 @@ describe('List Tags Use Case', () => {
 
     const { tags } = await sut.execute({
       name: 'Teste',
+      page: 1,
     })
 
     expect(tags).toEqual([])

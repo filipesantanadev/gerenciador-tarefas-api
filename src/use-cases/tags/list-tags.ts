@@ -3,6 +3,7 @@ import type { Tag } from 'generated/prisma/index.js'
 
 interface ListTagsUseCaseRequest {
   name: string
+  page: number
 }
 
 interface ListTagsUseCaseResponse {
@@ -14,8 +15,9 @@ export class ListTagsUseCase {
 
   async execute({
     name,
+    page,
   }: ListTagsUseCaseRequest): Promise<ListTagsUseCaseResponse> {
-    const tags = await this.tagsRepository.findManyByName(name)
+    const tags = await this.tagsRepository.findManyByName(name, page)
 
     return { tags }
   }

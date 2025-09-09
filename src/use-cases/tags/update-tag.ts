@@ -11,6 +11,7 @@ interface UpdateTagUseCaseRequest {
   description?: string
   color?: string
   created_by: string
+  page: number
 }
 
 interface UpdateTagUseCaseResponse {
@@ -29,6 +30,7 @@ export class UpdateTagUseCase {
     description,
     color,
     created_by,
+    page,
   }: UpdateTagUseCaseRequest): Promise<UpdateTagUseCaseResponse> {
     const user = await this.usersRepository.findById(created_by)
 
@@ -43,7 +45,10 @@ export class UpdateTagUseCase {
     }
 
     if (name) {
-      const tagsWithSameName = await this.tagsRepository.findManyByName(name)
+      const tagsWithSameName = await this.tagsRepository.findManyByName(
+        name,
+        page,
+      )
 
       const duplicateTag = tagsWithSameName.find(
         (tag) => tag.name === name && tag.id !== id,

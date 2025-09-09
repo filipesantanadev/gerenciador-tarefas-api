@@ -29,13 +29,19 @@ export class InMemoryTagsRepository implements TagsRepository {
     return tag
   }
 
-  async findManyByIds(ids: string[]) {
-    const items = this.items.filter((item) => ids.includes(item.id))
+  async findManyByIds(ids: string[], page: number) {
+    const items = this.items
+      .filter((item) => ids.includes(item.id))
+      .slice((page - 1) * 20, page * 20)
+
     return items
   }
 
-  async findManyByName(name: string) {
-    const tag = this.items.filter((item) => item.name.includes(name))
+  async findManyByName(name: string, page: number) {
+    const tag = this.items
+      .filter((item) => item.name.includes(name))
+      .slice((page - 1) * 20, page * 20)
+
     return tag
   }
 

@@ -34,6 +34,7 @@ describe('Update Tag Use Case', () => {
       id: category.id,
       description: 'TypeScript',
       created_by: user.id,
+      page: 1,
     })
 
     expect(updatedCategory.tag.id).toEqual(category.id)
@@ -62,6 +63,7 @@ describe('Update Tag Use Case', () => {
       description: 'New description',
       color: '#0000FF',
       created_by: user.id,
+      page: 1,
     })
 
     expect(updated.name).toEqual('Novo')
@@ -82,6 +84,7 @@ describe('Update Tag Use Case', () => {
         id: tag.id,
         description: 'Work test',
         created_by: userId,
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
@@ -98,6 +101,7 @@ describe('Update Tag Use Case', () => {
         id: 'not-existing-id-tag',
         description: 'Work test',
         created_by: user.id,
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
@@ -126,6 +130,7 @@ describe('Update Tag Use Case', () => {
         id: tag.id,
         name: 'Work',
         created_by: user.id,
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(TagAlreadyExistsError)
   })
@@ -148,6 +153,7 @@ describe('Update Tag Use Case', () => {
       sut.execute({
         id: tag.id,
         created_by: user.id,
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(InvalidUpdateDataError)
   })

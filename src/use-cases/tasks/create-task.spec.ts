@@ -64,6 +64,7 @@ describe('Create Task Use Case', () => {
       userId: 'user-1',
       categoryId: 'category-1',
       tags: [{ id: tag1.id }, { id: tag2.id }],
+      page: 1,
     })
 
     expect(task.id).toEqual(expect.any(String))
@@ -110,6 +111,7 @@ describe('Create Task Use Case', () => {
         userId: user1.id,
         categoryId: category.id,
         tags: [{ id: tag1.id }, { id: tag2.id }],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(UnauthorizedError)
   })
@@ -154,6 +156,7 @@ describe('Create Task Use Case', () => {
         userId: user1.id,
         categoryId: category.id,
         tags: [{ id: tag1.id }, { id: tag2.id }],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(UnauthorizedError)
   })
@@ -184,6 +187,7 @@ describe('Create Task Use Case', () => {
         userId: 'not-existing-user',
         categoryId: 'category-1',
         tags: [],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(InvalidCredentialsError)
   })
@@ -195,6 +199,7 @@ describe('Create Task Use Case', () => {
       priority: 'MEDIUM',
       userId: 'user-1',
       tags: [],
+      page: 1,
     })
 
     expect(task.due_date).toBeNull()
@@ -217,6 +222,7 @@ describe('Create Task Use Case', () => {
         userId: 'user-1',
         categoryId: 'category-1',
         tags: [{ id: tag1.id }, { id: 'tag-does-not-exist' }],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
@@ -237,6 +243,7 @@ describe('Create Task Use Case', () => {
         userId: 'user-1',
         categoryId: 'not-existing-category',
         tags: [{ id: otherUserTag.id }],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
@@ -257,6 +264,7 @@ describe('Create Task Use Case', () => {
         userId: 'user-1',
         categoryId: 'category-1',
         tags: [{ id: otherUserTag.id }],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(UnauthorizedError)
   })
@@ -272,6 +280,7 @@ describe('Create Task Use Case', () => {
         userId: 'user-1',
         categoryId: 'category-1',
         tags: [],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(TitleIsRequiredError)
   })

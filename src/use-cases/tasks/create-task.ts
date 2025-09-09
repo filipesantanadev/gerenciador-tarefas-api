@@ -18,6 +18,7 @@ interface CreateTaskUseCaseRequest {
   userId: string
   categoryId?: string
   tags: { id: string }[]
+  page: number
 }
 
 interface CreateTaskUseCaseResponse {
@@ -42,6 +43,7 @@ export class CreateTaskUseCase {
     userId,
     categoryId,
     tags,
+    page,
   }: CreateTaskUseCaseRequest): Promise<CreateTaskUseCaseResponse> {
     if (!title || title.trim() === '') {
       throw new TitleIsRequiredError()
@@ -64,7 +66,7 @@ export class CreateTaskUseCase {
     }
 
     const tagIds = tags.map((t) => t.id)
-    const existingTags = await this.tagsRepository.findManyByIds(tagIds)
+    const existingTags = await this.tagsRepository.findManyByIds(tagIds, page)
     if (existingTags.length !== tagIds.length) {
       throw new ResourceNotFoundError()
     }

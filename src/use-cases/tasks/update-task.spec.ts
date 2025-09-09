@@ -57,6 +57,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     expect(updatedTask.title).toBe('Updated Title')
@@ -70,6 +71,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     expect(updatedTask.description).toBe('Updated description')
@@ -82,6 +84,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     expect(updatedTask.status).toBe(TaskStatus.IN_PROGRESS)
@@ -94,6 +97,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     expect(updatedTask.priority).toBe(Priority.URGENT)
@@ -108,6 +112,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     expect(updatedTask.due_date).toEqual(newDueDate)
@@ -127,6 +132,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     const { task: updatedTask } = await sut.execute({
@@ -135,6 +141,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     expect(updatedTask.completed_at).toEqual(new Date())
@@ -147,6 +154,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     expect(updatedTask.is_archived).toBe(true)
@@ -159,6 +167,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     expect(updatedTask.is_archived).toBe(false)
@@ -188,6 +197,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: category.id,
       tags: [{ id: tag.id }],
+      page: 1,
     })
 
     expect(updatedTask.title).toBe('Updated Task')
@@ -203,6 +213,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     expect(updatedTask.description).toBeNull()
@@ -215,6 +226,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     expect(updatedTask.due_date).toBeNull()
@@ -227,6 +239,7 @@ describe('Update Task Use Case', () => {
       status: TaskStatus.IN_PROGRESS,
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     await sut.execute({
@@ -235,6 +248,7 @@ describe('Update Task Use Case', () => {
       status: TaskStatus.DONE,
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     const { task: updatedTask } = await sut.execute({
@@ -243,6 +257,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     expect(updatedTask.completed_at).toBeNull()
@@ -256,6 +271,7 @@ describe('Update Task Use Case', () => {
         userId: 'nonexistent-user',
         categoryId: null,
         tags: [],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(InvalidCredentialsError)
   })
@@ -268,6 +284,7 @@ describe('Update Task Use Case', () => {
         userId: 'user-1',
         categoryId: 'nonexistent-category',
         tags: [],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
@@ -280,6 +297,7 @@ describe('Update Task Use Case', () => {
         userId: 'user-1',
         categoryId: null,
         tags: [],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
@@ -303,6 +321,7 @@ describe('Update Task Use Case', () => {
         userId: user2.id,
         categoryId: null,
         tags: [],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(UnauthorizedError)
   })
@@ -315,6 +334,7 @@ describe('Update Task Use Case', () => {
         userId: 'user-1',
         categoryId: null,
         tags: [],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(InvalidUpdateDataError)
   })
@@ -324,6 +344,7 @@ describe('Update Task Use Case', () => {
       sut.execute({
         id: 'task-1',
         userId: 'user-1',
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(InvalidUpdateDataError)
   })
@@ -336,6 +357,7 @@ describe('Update Task Use Case', () => {
         userId: 'user-1',
         categoryId: null,
         tags: [],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(InvalidUpdateDataError)
   })
@@ -356,6 +378,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     expect(updatedTask.updated_at).not.toEqual(originalUpdatedAt)
@@ -371,6 +394,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     expect(task.status).toBe(TaskStatus.IN_PROGRESS)
@@ -383,6 +407,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     expect(task.status).toBe(TaskStatus.CANCELLED)
@@ -391,10 +416,11 @@ describe('Update Task Use Case', () => {
   it('should not be able to transition from DONE to any status', async () => {
     await sut.execute({
       id: 'task-1',
-      status: TaskStatus.IN_PROGRESS, // TODO → IN_PROGRESS
+      status: TaskStatus.IN_PROGRESS,
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     await sut.execute({
@@ -403,6 +429,7 @@ describe('Update Task Use Case', () => {
       userId: 'user-1',
       categoryId: null,
       tags: [],
+      page: 1,
     })
 
     await expect(
@@ -412,6 +439,7 @@ describe('Update Task Use Case', () => {
         userId: 'user-1',
         categoryId: null,
         tags: [],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(InvalidUpdateDataError)
   })
@@ -431,6 +459,7 @@ describe('Update Task Use Case', () => {
         userId: 'user-1',
         categoryId: null,
         tags: [],
+        page: 1,
       })
 
       expect(updatedTask.priority).toBe(priority)
@@ -487,6 +516,7 @@ describe('Update Task Use Case', () => {
         userId: user1.id,
         categoryId: category.id,
         tags: [{ id: tag1.id }, { id: tag2.id }],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(UnauthorizedError)
   })
@@ -516,6 +546,7 @@ describe('Update Task Use Case', () => {
         userId: 'user-1',
         categoryId: category.id,
         tags: [{ id: 'tag-1' }, { id: 'tag-2' }],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
@@ -568,6 +599,7 @@ describe('Update Task Use Case', () => {
         userId: user1.id,
         categoryId: category.id,
         tags: [{ id: tag1.id }, { id: tag2.id }],
+        page: 1,
       }),
     ).rejects.toBeInstanceOf(UnauthorizedError)
   })
