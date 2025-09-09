@@ -14,9 +14,10 @@ export class InMemoryCategoriesRepository implements CategoriesRepository {
     return category
   }
 
-  async findManyByUserId(userId: string) {
+  async findManyByUserId(userId: string, page: number) {
     const categories = this.items
       .filter((item) => item.user_id === userId)
+      .slice((page - 1) * 20, page * 20)
       .sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
 
     return categories

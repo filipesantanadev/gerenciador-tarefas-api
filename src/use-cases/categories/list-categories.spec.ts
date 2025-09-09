@@ -36,6 +36,7 @@ describe('List Categories Use Case', () => {
 
     const { categories } = await sut.execute({
       userId,
+      page: 1,
     })
 
     expect(categories).toHaveLength(2)
@@ -45,6 +46,7 @@ describe('List Categories Use Case', () => {
   it('should return empty array when user has no categories', async () => {
     const { categories } = await sut.execute({
       userId: 'user-without-categories',
+      page: 1,
     })
 
     expect(categories).toEqual([])
@@ -69,7 +71,7 @@ describe('List Categories Use Case', () => {
       user_id: userId2,
     })
 
-    const { categories } = await sut.execute({ userId: userId1 })
+    const { categories } = await sut.execute({ userId: userId1, page: 1 })
 
     expect(categories).toHaveLength(5)
     expect(categories.map((c) => c.user_id)).toEqual(Array(5).fill(userId1))
@@ -98,7 +100,7 @@ describe('List Categories Use Case', () => {
       user_id: userId,
     })
 
-    const { categories } = await sut.execute({ userId })
+    const { categories } = await sut.execute({ userId, page: 1 })
 
     expect(categories.map((c) => c.name)).toEqual(
       expect.arrayContaining(['A', 'B']),

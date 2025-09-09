@@ -3,6 +3,7 @@ import type { Category } from 'generated/prisma/index.js'
 
 interface ListCategoriesUseCaseRequest {
   userId: string
+  page: number
 }
 
 interface ListCategoriesUseCaseResponse {
@@ -14,8 +15,12 @@ export class ListCategoriesUseCase {
 
   async execute({
     userId,
+    page,
   }: ListCategoriesUseCaseRequest): Promise<ListCategoriesUseCaseResponse> {
-    const categories = await this.categoriesRepository.findManyByUserId(userId)
+    const categories = await this.categoriesRepository.findManyByUserId(
+      userId,
+      page,
+    )
 
     return { categories }
   }
