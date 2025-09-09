@@ -57,8 +57,6 @@ describe('Fetch Tasks by Category Use Case', () => {
       page: 1,
     })
 
-    console.log(tasks)
-
     expect(tasks).toHaveLength(3)
   })
 
