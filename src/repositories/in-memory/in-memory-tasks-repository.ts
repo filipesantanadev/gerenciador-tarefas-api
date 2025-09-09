@@ -10,6 +10,7 @@ import { randomUUID } from 'node:crypto'
 import type {
   AdvancedFilterParams,
   FindManyParams,
+  SearchTasksParams,
   TasksRepository,
   TaskWithRelations,
 } from '../tasks-repository.ts'
@@ -24,6 +25,23 @@ interface TaskCreateWithTagsInput extends Prisma.TaskUncheckedCreateInput {
 export class InMemoryTasksRepository implements TasksRepository {
   public items: Task[] = []
   public taskTags: Array<{ taskId: string; tagId: string }> = []
+  private populateTaskRelations(task: Task): TaskWithRelations {
+    const category = task.category_id
+      ? this.categories.find((cat) => cat.id === task.category_id) || null
+      : null
+
+    const taskTagIds = this.taskTags
+      .filter((relation) => relation.taskId === task.id)
+      .map((relation) => relation.tagId)
+
+    const tags = this.tags.filter((tag) => taskTagIds.includes(tag.id))
+
+    return {
+      ...task,
+      category,
+      tags,
+    }
+  }
 
   constructor(
     private tags: Tag[] = [],
@@ -93,36 +111,20 @@ export class InMemoryTasksRepository implements TasksRepository {
 
   async findManyByCategoryId(categoryId: string, page: number) {
     return this.items
-      .filter((item) => item.category_id === categoryId)
+      .filter((task) => task.category_id === categoryId)
       .slice((page - 1) * 20, page * 20)
+      .map((task) => this.populateTaskRelations(task))
   }
 
-  async findManyByTagId(tagId: string) {
+  async findManyByTagId(tagId: string, page: number) {
     const taskIdsWithTag = this.taskTags
       .filter((relation) => relation.tagId === tagId)
       .map((relation) => relation.taskId)
 
     return this.items
       .filter((task) => taskIdsWithTag.includes(task.id))
+      .slice((page - 1) * 20, page * 20)
       .map((task) => this.populateTaskRelations(task))
-  }
-
-  private populateTaskRelations(task: Task): TaskWithRelations {
-    const category = task.category_id
-      ? this.categories.find((cat) => cat.id === task.category_id) || null
-      : null
-
-    const taskTagIds = this.taskTags
-      .filter((relation) => relation.taskId === task.id)
-      .map((relation) => relation.tagId)
-
-    const tags = this.tags.filter((tag) => taskTagIds.includes(tag.id))
-
-    return {
-      ...task,
-      category,
-      tags,
-    }
   }
 
   async findMany(params: FindManyParams) {
@@ -358,7 +360,7 @@ export class InMemoryTasksRepository implements TasksRepository {
     return tasksWithRelations
   }
 
-  async searchByText(params: FindManyParams) {
+  async searchByText(params: SearchTasksParams) {
     const { userId, query, includeArchived = false, page = 1 } = params
 
     if (!query || query.trim().length < 2) {
