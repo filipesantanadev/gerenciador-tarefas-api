@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { InMemoryTasksRepository } from '@/repositories/in-memory/in-memory-tasks-repository.ts'
-import { FilterTaskUseCase } from './filter-tasks.ts'
+import { FilterTasksUseCase } from './filter-tasks.ts'
 
 let tasksRepository: InMemoryTasksRepository
-let sut: FilterTaskUseCase
+let sut: FilterTasksUseCase
 
 describe('Filter Tasks Use Case', () => {
   beforeEach(() => {
     tasksRepository = new InMemoryTasksRepository()
-    sut = new FilterTaskUseCase(tasksRepository)
+    sut = new FilterTasksUseCase(tasksRepository)
 
     vi.useFakeTimers()
   })

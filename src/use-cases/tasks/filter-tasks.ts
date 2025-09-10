@@ -39,7 +39,7 @@ interface FilterTaskUseCaseResponse {
   appliedFilters: string[]
 }
 
-export class FilterTaskUseCase {
+export class FilterTasksUseCase {
   constructor(private tasksRepository: TasksRepository) {}
 
   async execute(
