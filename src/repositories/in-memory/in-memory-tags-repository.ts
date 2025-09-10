@@ -29,10 +29,8 @@ export class InMemoryTagsRepository implements TagsRepository {
     return tag
   }
 
-  async findManyByIds(ids: string[], page: number) {
-    const items = this.items
-      .filter((item) => ids.includes(item.id))
-      .slice((page - 1) * 20, page * 20)
+  async findManyByIds(ids: string[]) {
+    const items = this.items.filter((item) => ids.includes(item.id))
 
     return items
   }

@@ -450,7 +450,7 @@ export class InMemoryTasksRepository implements TasksRepository {
 
     if (!currentTask) throw new ResourceNotFoundError()
 
-    const updatedCategory: Task = {
+    const updatedTask: Task = {
       id: currentTask.id,
       title: (data.title as string) ?? currentTask.title,
       description:
@@ -471,12 +471,12 @@ export class InMemoryTasksRepository implements TasksRepository {
       created_at: currentTask.created_at,
       updated_at: new Date(),
       user_id: currentTask.user_id,
-      category_id: currentTask.category_id,
+      category_id: data.category?.connect?.id ?? currentTask.category_id,
     }
 
-    this.items[taskIndex] = updatedCategory
+    this.items[taskIndex] = updatedTask
 
-    return updatedCategory
+    return updatedTask
   }
 
   async updateWithTags(
