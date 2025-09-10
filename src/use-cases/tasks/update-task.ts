@@ -19,8 +19,7 @@ interface UpdateTaskUseCaseRequest {
   isArchived?: boolean
   userId: string
   categoryId?: string | null
-  tags?: { id: string }[]
-  page: number
+  tagIds?: string[]
 }
 
 interface UpdateTaskUseCaseResponse {
@@ -46,8 +45,7 @@ export class UpdateTaskUseCase {
     isArchived,
     userId,
     categoryId,
-    tags = [],
-    page,
+    tagIds = [],
   }: UpdateTaskUseCaseRequest): Promise<UpdateTaskUseCaseResponse> {
     const requestFields = {
       title,
@@ -58,12 +56,12 @@ export class UpdateTaskUseCase {
       completedAt,
       isArchived,
       categoryId,
-      tags,
+      tagIds,
     }
 
     const hasValidUpdates = Object.entries(requestFields).some(
       ([key, value]) => {
-        if (key === 'tags') {
+        if (key === 'tagIds') {
           return Array.isArray(value) && value.length > 0
         }
         return value !== undefined
@@ -74,8 +72,6 @@ export class UpdateTaskUseCase {
       throw new InvalidUpdateDataError()
     }
 
-    const tagIds = tags?.map((t) => t.id) || []
-
     const [user, task, category, existingTags] = await Promise.all([
       this.usersRepository.findById(userId),
       this.tasksRepository.findById(id),
@@ -83,7 +79,7 @@ export class UpdateTaskUseCase {
         ? this.categoriesRepository.findById(categoryId)
         : Promise.resolve(null),
       tagIds.length > 0
-        ? this.tagsRepository.findManyByIds(tagIds, page)
+        ? this.tagsRepository.findManyByIds(tagIds)
         : Promise.resolve([]),
     ])
 
@@ -104,7 +100,7 @@ export class UpdateTaskUseCase {
       const hasForbiddenUpdates = forbiddenUpdates.some(
         (val) => val !== undefined,
       )
-      const hasTagUpdates = tags && tags.length > 0
+      const hasTagUpdates = tagIds && tagIds.length > 0
 
       if (hasForbiddenUpdates || hasTagUpdates) {
         throw new InvalidUpdateDataError()
@@ -185,7 +181,7 @@ export class UpdateTaskUseCase {
 
     let updatedTask: Task
 
-    if (tags !== undefined) {
+    if (tagIds !== undefined) {
       updatedTask = await this.tasksRepository.updateWithTags(
         id,
         updateData,
