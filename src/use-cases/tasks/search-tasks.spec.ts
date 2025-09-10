@@ -83,7 +83,7 @@ describe('Search Tasks Use Case', () => {
         title: `Task ${i}`,
         user_id: 'user-1',
         is_archived: false,
-        created_at: new Date(),
+        created_at: new Date(2025, 0, 1, 0, 0, i),
       })
     }
     const { tasks } = await sut.execute({
@@ -93,8 +93,8 @@ describe('Search Tasks Use Case', () => {
     })
 
     expect(tasks).toHaveLength(2)
-    expect(tasks[0]?.title).toEqual('Task 21')
-    expect(tasks[1]?.title).toEqual('Task 22')
+    expect(tasks[0]?.title).toEqual('Task 2')
+    expect(tasks[1]?.title).toEqual('Task 1')
   })
 
   it('should not return archived tasks in search results', async () => {

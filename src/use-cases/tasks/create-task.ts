@@ -17,8 +17,7 @@ interface CreateTaskUseCaseRequest {
   completedAt?: Date
   userId: string
   categoryId?: string
-  tags: { id: string }[]
-  page: number
+  tagIds?: string[]
 }
 
 interface CreateTaskUseCaseResponse {
@@ -42,8 +41,7 @@ export class CreateTaskUseCase {
     completedAt,
     userId,
     categoryId,
-    tags,
-    page,
+    tagIds = [],
   }: CreateTaskUseCaseRequest): Promise<CreateTaskUseCaseResponse> {
     if (!title || title.trim() === '') {
       throw new TitleIsRequiredError()
@@ -65,15 +63,18 @@ export class CreateTaskUseCase {
       }
     }
 
-    const tagIds = tags.map((t) => t.id)
-    const existingTags = await this.tagsRepository.findManyByIds(tagIds, page)
-    if (existingTags.length !== tagIds.length) {
-      throw new ResourceNotFoundError()
-    }
-    if (
-      existingTags.some((tag) => tag.created_by && tag.created_by !== userId)
-    ) {
-      throw new UnauthorizedError()
+    if (tagIds.length > 0) {
+      const existingTags = await this.tagsRepository.findManyByIds(tagIds)
+
+      if (existingTags.length !== tagIds.length) {
+        throw new ResourceNotFoundError()
+      }
+
+      if (
+        existingTags.some((tag) => tag.created_by && tag.created_by !== userId)
+      ) {
+        throw new UnauthorizedError()
+      }
     }
 
     const task = await this.tasksRepository.create({
@@ -85,7 +86,9 @@ export class CreateTaskUseCase {
       completed_at: completedAt ?? null,
       user_id: userId,
       category_id: categoryId ?? null,
-      tags: { connect: tags.map((tag) => ({ id: tag.id })) },
+      ...(tagIds.length > 0 && {
+        tags: { connect: tagIds.map((id) => ({ id })) },
+      }),
     })
 
     return { task }

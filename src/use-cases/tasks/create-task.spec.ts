@@ -63,8 +63,7 @@ describe('Create Task Use Case', () => {
       dueDate: new Date(),
       userId: 'user-1',
       categoryId: 'category-1',
-      tags: [{ id: tag1.id }, { id: tag2.id }],
-      page: 1,
+      tagIds: [tag1.id, tag2.id],
     })
 
     expect(task.id).toEqual(expect.any(String))
@@ -110,8 +109,7 @@ describe('Create Task Use Case', () => {
         dueDate: new Date(),
         userId: user1.id,
         categoryId: category.id,
-        tags: [{ id: tag1.id }, { id: tag2.id }],
-        page: 1,
+        tagIds: [tag1.id, tag2.id],
       }),
     ).rejects.toBeInstanceOf(UnauthorizedError)
   })
@@ -155,8 +153,7 @@ describe('Create Task Use Case', () => {
         dueDate: new Date(),
         userId: user1.id,
         categoryId: category.id,
-        tags: [{ id: tag1.id }, { id: tag2.id }],
-        page: 1,
+        tagIds: [tag1.id, tag2.id],
       }),
     ).rejects.toBeInstanceOf(UnauthorizedError)
   })
@@ -186,8 +183,7 @@ describe('Create Task Use Case', () => {
         dueDate: new Date(),
         userId: 'not-existing-user',
         categoryId: 'category-1',
-        tags: [],
-        page: 1,
+        tagIds: [],
       }),
     ).rejects.toBeInstanceOf(InvalidCredentialsError)
   })
@@ -198,8 +194,7 @@ describe('Create Task Use Case', () => {
       status: 'TODO',
       priority: 'MEDIUM',
       userId: 'user-1',
-      tags: [],
-      page: 1,
+      tagIds: [],
     })
 
     expect(task.due_date).toBeNull()
@@ -207,7 +202,7 @@ describe('Create Task Use Case', () => {
   })
 
   it('should not allow creating a task if any tag does not exist', async () => {
-    const tag1 = await tagsRepository.create({
+    await tagsRepository.create({
       id: 'tag1',
       name: 'Urgent',
       creator: { connect: { id: 'user-1' } },
@@ -221,8 +216,7 @@ describe('Create Task Use Case', () => {
         priority: 'HIGH',
         userId: 'user-1',
         categoryId: 'category-1',
-        tags: [{ id: tag1.id }, { id: 'tag-does-not-exist' }],
-        page: 1,
+        tagIds: ['tag2'],
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
@@ -242,8 +236,7 @@ describe('Create Task Use Case', () => {
         priority: 'HIGH',
         userId: 'user-1',
         categoryId: 'not-existing-category',
-        tags: [{ id: otherUserTag.id }],
-        page: 1,
+        tagIds: [otherUserTag.id],
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
@@ -263,8 +256,7 @@ describe('Create Task Use Case', () => {
         priority: 'HIGH',
         userId: 'user-1',
         categoryId: 'category-1',
-        tags: [{ id: otherUserTag.id }],
-        page: 1,
+        tagIds: [otherUserTag.id],
       }),
     ).rejects.toBeInstanceOf(UnauthorizedError)
   })
@@ -279,8 +271,7 @@ describe('Create Task Use Case', () => {
         dueDate: new Date(),
         userId: 'user-1',
         categoryId: 'category-1',
-        tags: [],
-        page: 1,
+        tagIds: [],
       }),
     ).rejects.toBeInstanceOf(TitleIsRequiredError)
   })
