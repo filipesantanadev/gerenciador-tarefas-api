@@ -119,8 +119,6 @@ describe('Filter Tasks Use Case', () => {
       page: 2,
     })
 
-    console.log({ tasks })
-
     expect(tasks).toHaveLength(2)
     expect(tasks[0]?.title).toEqual('Task 21')
     expect(tasks[1]?.title).toEqual('Task 22')
