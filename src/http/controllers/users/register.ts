@@ -1,16 +1,19 @@
-import type { FastifyRequest, FastifyReply } from 'fastify'
-import { z } from 'zod'
 import { UserAlreadyExistsError } from '@/use-cases/errors/user-already-exists-error.ts'
 import { makeRegisterUseCase } from '@/use-cases/factories/auth/make-register-use-case.ts'
+import type { FastifyRequest, FastifyReply } from 'fastify'
+import { z } from 'zod'
 
 export async function register(request: FastifyRequest, reply: FastifyReply) {
   const registerBodySchema = z.object({
     name: z.string(),
     email: z.string().email(),
     password: z.string().min(6),
+    confirmPassword: z.string().min(6),
   })
 
-  const { name, email, password } = registerBodySchema.parse(request.body)
+  const { name, email, password, confirmPassword } = registerBodySchema.parse(
+    request.body,
+  )
 
   try {
     const registerUseCase = makeRegisterUseCase()
@@ -19,6 +22,7 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
       name,
       email,
       password,
+      confirmPassword,
     })
   } catch (error) {
     if (error instanceof UserAlreadyExistsError) {
