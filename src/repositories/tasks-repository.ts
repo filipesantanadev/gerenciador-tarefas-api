@@ -1,4 +1,11 @@
-import type { Category, Prisma, Tag, Task } from 'generated/prisma/index.js'
+import type {
+  Category,
+  Priority,
+  Prisma,
+  Tag,
+  Task,
+  TaskStatus,
+} from 'generated/prisma/index.js'
 
 type OrderableFields = 'createdAt' | 'dueDate' | 'priority'
 type ExtendedOrderableFields = OrderableFields | 'title'
@@ -41,6 +48,17 @@ export interface AdvancedFilterParams extends Omit<FindManyParams, 'orderBy'> {
 export interface TaskWithRelations extends Task {
   category: Category | null
   tags: Tag[]
+}
+
+export interface TaskUpdateData {
+  title?: string
+  description?: string | null
+  status?: TaskStatus
+  priority?: Priority
+  dueDate?: Date | null
+  completedAt?: Date | null
+  isArchived?: boolean
+  categoryId?: string | null
 }
 
 export interface TasksRepository {

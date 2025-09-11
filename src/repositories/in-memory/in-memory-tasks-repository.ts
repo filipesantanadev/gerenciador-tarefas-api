@@ -12,6 +12,7 @@ import type {
   FindManyParams,
   SearchTasksParams,
   TasksRepository,
+  TaskUpdateData,
   TaskWithRelations,
 } from '../tasks-repository.ts'
 import { ResourceNotFoundError } from '@/use-cases/errors/resource-not-found-error.ts'
@@ -441,7 +442,7 @@ export class InMemoryTasksRepository implements TasksRepository {
     return updatedTask
   }
 
-  async update(id: string, data: Prisma.TaskUpdateInput) {
+  async update(id: string, data: TaskUpdateData) {
     const taskIndex = this.items.findIndex((item) => item.id === id)
 
     if (taskIndex === -1) throw new ResourceNotFoundError()
@@ -460,18 +461,18 @@ export class InMemoryTasksRepository implements TasksRepository {
       status: (data.status as TaskStatus) ?? currentTask.status,
       priority: (data.priority as Priority) ?? currentTask.priority,
       due_date:
-        data.due_date !== undefined
-          ? (data.due_date as Date | null)
+        data.dueDate !== undefined
+          ? (data.dueDate as Date | null)
           : currentTask.due_date,
       completed_at:
-        data.completed_at !== undefined
-          ? (data.completed_at as Date)
+        data.completedAt !== undefined
+          ? (data.completedAt as Date)
           : currentTask.completed_at,
-      is_archived: (data.is_archived as boolean) ?? currentTask.is_archived,
+      is_archived: (data.isArchived as boolean) ?? currentTask.is_archived,
       created_at: currentTask.created_at,
       updated_at: new Date(),
       user_id: currentTask.user_id,
-      category_id: data.category?.connect?.id ?? currentTask.category_id,
+      category_id: data.categoryId ?? currentTask.category_id,
     }
 
     this.items[taskIndex] = updatedTask
@@ -479,11 +480,7 @@ export class InMemoryTasksRepository implements TasksRepository {
     return updatedTask
   }
 
-  async updateWithTags(
-    id: string,
-    data: Prisma.TaskUpdateInput,
-    tagIds: string[],
-  ) {
+  async updateWithTags(id: string, data: TaskUpdateData, tagIds: string[]) {
     const task = await this.update(id, data)
 
     if (!task) {

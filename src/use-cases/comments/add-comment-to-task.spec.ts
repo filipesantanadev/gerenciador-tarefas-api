@@ -93,7 +93,7 @@ describe('Create Task Use Case', () => {
   })
 
   it('should not be able to create a comment in an archived task', async () => {
-    await tasksRepository.update('task-1', { is_archived: true })
+    await tasksRepository.update('task-1', { isArchived: true })
 
     await expect(() =>
       sut.execute({

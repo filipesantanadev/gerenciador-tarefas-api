@@ -1,5 +1,8 @@
 import { Priority, TaskStatus, type Task } from 'generated/prisma/index.js'
-import type { TasksRepository } from '@/repositories/tasks-repository.ts'
+import type {
+  TasksRepository,
+  TaskUpdateData,
+} from '@/repositories/tasks-repository.ts'
 import type { UsersRepository } from '@/repositories/users-repository.ts'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
 import { InvalidUpdateDataError } from '../errors/invalid-update-data-error.ts'
@@ -45,7 +48,7 @@ export class UpdateTaskUseCase {
     isArchived,
     userId,
     categoryId,
-    tagIds = [],
+    tagIds,
   }: UpdateTaskUseCaseRequest): Promise<UpdateTaskUseCaseResponse> {
     const requestFields = {
       title,
@@ -62,7 +65,7 @@ export class UpdateTaskUseCase {
     const hasValidUpdates = Object.entries(requestFields).some(
       ([key, value]) => {
         if (key === 'tagIds') {
-          return Array.isArray(value) && value.length > 0
+          return Array.isArray(value)
         }
         return value !== undefined
       },
@@ -78,7 +81,7 @@ export class UpdateTaskUseCase {
       categoryId
         ? this.categoriesRepository.findById(categoryId)
         : Promise.resolve(null),
-      tagIds.length > 0
+      Array.isArray(tagIds) && tagIds.length > 0
         ? this.tagsRepository.findManyByIds(tagIds)
         : Promise.resolve([]),
     ])
@@ -100,7 +103,7 @@ export class UpdateTaskUseCase {
       const hasForbiddenUpdates = forbiddenUpdates.some(
         (val) => val !== undefined,
       )
-      const hasTagUpdates = tagIds && tagIds.length > 0
+      const hasTagUpdates = tagIds !== undefined
 
       if (hasForbiddenUpdates || hasTagUpdates) {
         throw new InvalidUpdateDataError()
@@ -125,7 +128,7 @@ export class UpdateTaskUseCase {
       }
     }
 
-    if (tagIds.length > 0) {
+    if (Array.isArray(tagIds) && tagIds.length > 0) {
       if (existingTags.length !== tagIds.length) {
         throw new ResourceNotFoundError()
       }
@@ -139,7 +142,7 @@ export class UpdateTaskUseCase {
       }
     }
 
-    const updateData: Record<string, unknown> = {}
+    const updateData: TaskUpdateData = {}
 
     if (title !== undefined) {
       if (typeof title === 'string' && title.trim()) {
@@ -159,13 +162,13 @@ export class UpdateTaskUseCase {
       updateData.status = status
 
       if (status === 'DONE') {
-        updateData.completed_at = completedAt ?? new Date()
+        updateData.completedAt = completedAt ?? new Date()
       }
     }
 
     if (completedAt !== undefined && !status) {
       if (task.status === 'DONE') {
-        updateData.completed_at = completedAt
+        updateData.completedAt = completedAt
       } else {
         throw new InvalidUpdateDataError()
       }
@@ -173,11 +176,11 @@ export class UpdateTaskUseCase {
 
     if (priority) updateData.priority = priority
 
-    if (dueDate !== undefined) updateData.due_date = dueDate
+    if (dueDate !== undefined) updateData.dueDate = dueDate
 
-    if (typeof isArchived === 'boolean') updateData.is_archived = isArchived
+    if (typeof isArchived === 'boolean') updateData.isArchived = isArchived
 
-    if (categoryId !== undefined) updateData.category_id = categoryId
+    if (categoryId !== undefined) updateData.categoryId = categoryId
 
     let updatedTask: Task
 
