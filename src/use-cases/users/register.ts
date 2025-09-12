@@ -8,7 +8,6 @@ interface RegisterUseCaseRequest {
   name: string
   email: string
   password: string
-  confirmPassword: string
 }
 
 interface RegisterUseCaseResponse {
@@ -22,12 +21,7 @@ export class RegisterUseCase {
     name,
     email,
     password,
-    confirmPassword,
   }: RegisterUseCaseRequest): Promise<RegisterUseCaseResponse> {
-    if (password !== confirmPassword) {
-      throw new PasswordsDoNotMatchError()
-    }
-
     const password_hash = await hash(password, 6)
 
     const userWithSameEmail = await this.usersRepository.findByEmail(email)
