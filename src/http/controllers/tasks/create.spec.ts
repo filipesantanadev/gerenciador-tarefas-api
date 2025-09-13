@@ -30,7 +30,7 @@ describe('Create Task (e2e)', () => {
     futureDate.setMonth(futureDate.getMonth() + 3)
 
     const response = await request(app.server)
-      .post('/create-task')
+      .post('/tasks')
       .set('Authorization', `Bearer ${token}`)
       .send({
         title: 'Study JavaScript',

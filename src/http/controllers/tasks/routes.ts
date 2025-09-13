@@ -5,5 +5,5 @@ import { create } from './create.ts'
 export async function tasksRoutes(app: FastifyInstance) {
   app.addHook('onRequest', verifyJWT)
 
-  app.post('/create-task', create)
+  app.post('/tasks', create)
 }
