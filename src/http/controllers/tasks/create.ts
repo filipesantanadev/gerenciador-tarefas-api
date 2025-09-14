@@ -56,7 +56,7 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
     if (error instanceof z.ZodError) {
       return reply.status(400).send({
         message: 'Validation error',
-        error,
+        errors: error.issues,
       })
     }
 
