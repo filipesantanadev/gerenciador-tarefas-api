@@ -7,8 +7,7 @@ import type {
   TaskStatus,
 } from 'generated/prisma/index.js'
 
-type OrderableFields = 'createdAt' | 'dueDate' | 'priority'
-type ExtendedOrderableFields = OrderableFields | 'title'
+type OrderableFields = 'createdAt' | 'dueDate' | 'priority' | 'title'
 
 export interface FindManyParams {
   userId: string
@@ -40,7 +39,7 @@ export interface AdvancedFilterParams extends Omit<FindManyParams, 'orderBy'> {
   createdBefore?: Date
 
   // Additional filters
-  orderBy?: ExtendedOrderableFields
+  orderBy?: OrderableFields
   hasDescription?: boolean
   overdue?: boolean
 }

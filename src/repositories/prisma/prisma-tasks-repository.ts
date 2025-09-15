@@ -176,6 +176,7 @@ export class PrismaTasksRepository implements TasksRepository {
       take: 20,
       skip: (page - 1) * 20,
       orderBy: {
+        ...(orderBy === 'title' && { title: order }),
         ...(orderBy === 'createdAt' && { created_at: order }),
         ...(orderBy === 'dueDate' && { due_date: order }),
         ...(orderBy === 'priority' && { priority: order }),

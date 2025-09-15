@@ -178,10 +178,44 @@ export class InMemoryTasksRepository implements TasksRepository {
       )
     }
 
-    // Sort by created_at descending
-    tasks = tasks.sort((a, b) => {
-      return b.created_at.getTime() - a.created_at.getTime()
-    })
+    // Sorting
+    switch (params.orderBy) {
+      case 'title':
+        tasks = tasks.sort((a, b) => {
+          const comp = a.title.localeCompare(b.title)
+          return params.order === 'asc' ? comp : -comp
+        })
+        break
+
+      case 'dueDate':
+        tasks = tasks.sort((a, b) => {
+          const aDate = a.due_date ? a.due_date.getTime() : 0
+          const bDate = b.due_date ? b.due_date.getTime() : 0
+          return params.order === 'asc' ? aDate - bDate : bDate - aDate
+        })
+        break
+
+      case 'priority':
+        {
+          const priorityOrder = { LOW: 1, MEDIUM: 2, HIGH: 3, URGENT: 4 }
+          tasks = tasks.sort((a, b) => {
+            const comp =
+              (priorityOrder[a.priority] ?? 0) -
+              (priorityOrder[b.priority] ?? 0)
+            return params.order === 'asc' ? comp : -comp
+          })
+        }
+        break
+
+      case 'createdAt':
+      default:
+        tasks = tasks.sort((a, b) => {
+          return params.order === 'asc'
+            ? a.created_at.getTime() - b.created_at.getTime()
+            : b.created_at.getTime() - a.created_at.getTime()
+        })
+        break
+    }
 
     // Pagination
     const pageSize = 20
