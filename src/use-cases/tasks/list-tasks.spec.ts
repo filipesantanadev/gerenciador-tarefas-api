@@ -433,4 +433,62 @@ describe('List Tasks Use Case', () => {
     expect(result.tasks.map((t) => t.id)).toEqual(['task-1', 'task-2'])
     expect(result.tasks.every((t) => !t.is_archived)).toBe(true)
   })
+
+  it('should return tasks even if dueDate is in the past', async () => {
+    const pastDate = new Date()
+    pastDate.setMonth(pastDate.getMonth() - 1)
+
+    const futureDate = new Date()
+    futureDate.setMonth(futureDate.getMonth() + 1)
+
+    await tasksRepository.create({
+      id: 'task-past',
+      title: 'Past Task',
+      user_id: 'user-1',
+      due_date: pastDate,
+    })
+
+    await tasksRepository.create({
+      id: 'task-future',
+      title: 'Future Task',
+      user_id: 'user-1',
+      due_date: futureDate,
+    })
+
+    const { tasks } = await sut.execute({
+      userId: 'user-1',
+    })
+
+    expect(tasks).toHaveLength(2)
+    expect(tasks.map((t) => t.title)).toEqual(
+      expect.arrayContaining(['Past Task', 'Future Task']),
+    )
+  })
+
+  it('should filter out archived tasks even if dueDate is in the past', async () => {
+    const pastDate = new Date()
+    pastDate.setMonth(pastDate.getMonth() - 1)
+
+    await tasksRepository.create({
+      id: 'task-archived',
+      title: 'Archived Past Task',
+      user_id: 'user-1',
+      due_date: pastDate,
+      is_archived: true,
+    })
+
+    await tasksRepository.create({
+      id: 'task-active',
+      title: 'Active Past Task',
+      user_id: 'user-1',
+      due_date: pastDate,
+    })
+
+    const { tasks } = await sut.execute({
+      userId: 'user-1',
+    })
+
+    expect(tasks).toHaveLength(1)
+    expect(tasks[0]?.title).toBe('Active Past Task')
+  })
 })
