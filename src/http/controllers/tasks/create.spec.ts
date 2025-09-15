@@ -3,15 +3,11 @@ import { app } from '@/app.ts'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 describe('Create Task (e2e)', () => {
+  let token: string
+
   beforeAll(async () => {
     await app.ready()
-  })
 
-  afterAll(async () => {
-    await app.close()
-  })
-
-  it.only('should be able to create a task', async () => {
     await request(app.server).post('/users').send({
       name: 'John Doe',
       email: 'johndoe@example.com',
@@ -24,22 +20,82 @@ describe('Create Task (e2e)', () => {
       password: '123456',
     })
 
-    const { token } = authResponse.body
+    token = authResponse.body.token
+  })
+
+  afterAll(async () => {
+    await app.close()
+  })
+
+  it('should be able to create a task', async () => {
+    const pastDate = new Date()
+    pastDate.setMonth(pastDate.getMonth() - 1)
+    pastDate.setHours(12, 0, 0, 0)
 
     const futureDate = new Date()
-    futureDate.setMonth(futureDate.getMonth() + 3)
+    futureDate.setMonth(futureDate.getMonth() + 1)
+    pastDate.setHours(12, 0, 0, 0)
 
-    const response = await request(app.server)
-      .post('/tasks')
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        title: 'Study JavaScript',
-        description: 'Study JavaScript for Interview',
+    const farFutureDate = new Date()
+    farFutureDate.setMonth(farFutureDate.getMonth() + 6)
+    pastDate.setHours(12, 0, 0, 0)
+
+    const tasksToCreate = [
+      {
+        title: 'Study JavaScript Fundamentals',
+        description: 'Learn basic JavaScript concepts',
         status: 'TODO',
         priority: 'HIGH',
         dueDate: futureDate,
-      })
+      },
+      {
+        title: 'Study React Hooks',
+        description: 'Learn advanced React concepts',
+        status: 'IN_PROGRESS',
+        priority: 'MEDIUM',
+        dueDate: farFutureDate,
+      },
+      {
+        title: 'Review Code Quality',
+        description: 'Code review session',
+        status: 'TODO',
+        priority: 'LOW',
+        dueDate: futureDate,
+      },
+      {
+        title: 'Deploy Application',
+        description: 'Deploy to production environment',
+        status: 'IN_PROGRESS',
+        priority: 'URGENT',
+        dueDate: futureDate,
+      },
+      {
+        title: 'Write Unit Tests',
+        description: 'Create comprehensive test suite',
+        status: 'TODO',
+        priority: 'HIGH',
+        dueDate: futureDate,
+      },
+      {
+        title: 'Take my Car for a Service',
+        description: 'Do a general check-up of my car before the trip',
+        status: 'DONE',
+        priority: 'URGENT',
+        dueDate: pastDate,
+      },
+    ]
 
-    expect(response.statusCode).toEqual(201)
+    const promises = tasksToCreate.map((task) => {
+      return request(app.server)
+        .post('/tasks')
+        .set('Authorization', `Bearer ${token}`)
+        .send(task)
+    })
+
+    const responses = await Promise.all(promises)
+
+    for (const response of responses) {
+      expect(response.statusCode).toEqual(201)
+    }
   })
 })

@@ -9,12 +9,7 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
     description: z.string().optional(),
     status: z.enum(TaskStatus),
     priority: z.enum(Priority),
-    dueDate: z.coerce
-      .date()
-      .refine((d) => d > new Date(), {
-        message: 'A data de vencimento deve ser no futuro',
-      })
-      .optional(),
+    dueDate: z.coerce.date().optional(),
     categoryId: z
       .string()
       .uuid('ID da categoria deve ser um UUID válido')
