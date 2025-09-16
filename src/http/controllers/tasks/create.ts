@@ -10,13 +10,10 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
     status: z.enum(TaskStatus),
     priority: z.enum(Priority),
     dueDate: z.coerce.date().optional(),
-    categoryId: z
-      .string()
-      .uuid('ID da categoria deve ser um UUID válido')
-      .optional(),
+    categoryId: z.string().uuid('Category ID must be a valid UUID').optional(),
     tagIds: z
-      .array(z.string().uuid('IDs das tags devem ser UUIDs válidos'))
-      .max(10, 'Máximo de 10 tags permitidas')
+      .array(z.string().uuid('Tag IDs must be valid UUIDs'))
+      .max(10, '"Maximum of 10 tags allowed')
       .optional(),
   })
 
