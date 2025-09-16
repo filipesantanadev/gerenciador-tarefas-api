@@ -279,6 +279,7 @@ describe('Filter Tasks Use Case', () => {
   it('should be able to filter overdue tasks', async () => {
     const pastDate = new Date()
     pastDate.setDate(pastDate.getDate() - 1)
+
     const futureDate = new Date()
     futureDate.setDate(futureDate.getDate() + 1)
 
