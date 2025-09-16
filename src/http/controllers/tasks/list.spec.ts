@@ -35,11 +35,11 @@ describe('List Tasks (E2E)', () => {
 
     const futureDate = new Date()
     futureDate.setMonth(futureDate.getMonth() + 1)
-    pastDate.setHours(12, 0, 0, 0)
+    futureDate.setHours(12, 0, 0, 0)
 
     const farFutureDate = new Date()
     farFutureDate.setMonth(farFutureDate.getMonth() + 6)
-    pastDate.setHours(12, 0, 0, 0)
+    farFutureDate.setHours(12, 0, 0, 0)
 
     const tasksToCreate = [
       {
@@ -98,7 +98,6 @@ describe('List Tasks (E2E)', () => {
       .set('Authorization', `Bearer ${token}`)
 
     expect(AllResponses.statusCode).toEqual(200)
-    expect(AllResponses.body.tasks).toHaveLength(6)
     expect(AllResponses.body.tasks).toHaveLength(6)
     expect(AllResponses.body.pagination).toBeDefined()
     expect(AllResponses.body.pagination.page).toBe(1)

@@ -34,11 +34,11 @@ describe('Create Task (e2e)', () => {
 
     const futureDate = new Date()
     futureDate.setMonth(futureDate.getMonth() + 1)
-    pastDate.setHours(12, 0, 0, 0)
+    futureDate.setHours(12, 0, 0, 0)
 
     const farFutureDate = new Date()
     farFutureDate.setMonth(farFutureDate.getMonth() + 6)
-    pastDate.setHours(12, 0, 0, 0)
+    farFutureDate.setHours(12, 0, 0, 0)
 
     const tasksToCreate = [
       {
