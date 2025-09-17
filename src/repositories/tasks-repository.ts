@@ -54,10 +54,10 @@ export interface TaskUpdateData {
   description?: string | null
   status?: TaskStatus
   priority?: Priority
-  dueDate?: Date | null
-  completedAt?: Date | null
-  isArchived?: boolean
-  categoryId?: string | null
+  due_date?: Date | null
+  completed_at?: Date | null
+  is_archived?: boolean
+  category_id?: string | null
 }
 
 export interface TasksRepository {

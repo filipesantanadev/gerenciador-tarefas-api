@@ -495,18 +495,18 @@ export class InMemoryTasksRepository implements TasksRepository {
       status: (data.status as TaskStatus) ?? currentTask.status,
       priority: (data.priority as Priority) ?? currentTask.priority,
       due_date:
-        data.dueDate !== undefined
-          ? (data.dueDate as Date | null)
+        data.due_date !== undefined
+          ? (data.due_date as Date | null)
           : currentTask.due_date,
       completed_at:
-        data.completedAt !== undefined
-          ? (data.completedAt as Date)
+        data.completed_at !== undefined
+          ? (data.completed_at as Date)
           : currentTask.completed_at,
-      is_archived: (data.isArchived as boolean) ?? currentTask.is_archived,
+      is_archived: (data.is_archived as boolean) ?? currentTask.is_archived,
       created_at: currentTask.created_at,
       updated_at: new Date(),
       user_id: currentTask.user_id,
-      category_id: data.categoryId ?? currentTask.category_id,
+      category_id: data.category_id ?? currentTask.category_id,
     }
 
     this.items[taskIndex] = updatedTask

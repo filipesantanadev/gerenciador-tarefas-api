@@ -100,17 +100,19 @@ describe('Update Task Use Case', () => {
   })
 
   it('should be able to update task due date', async () => {
-    const newDueDate = new Date('2024-12-31')
+    const futureDate = new Date()
+    futureDate.setMonth(futureDate.getMonth() + 1)
+    futureDate.setHours(12, 0, 0, 0)
 
     const { task: updatedTask } = await sut.execute({
       id: 'task-1',
-      dueDate: newDueDate,
+      dueDate: futureDate,
       userId: 'user-1',
       categoryId: null,
       tagIds: [],
     })
 
-    expect(updatedTask.due_date).toEqual(newDueDate)
+    expect(updatedTask.due_date).toEqual(futureDate)
   })
 
   it('should be able to update task completed_at', async () => {

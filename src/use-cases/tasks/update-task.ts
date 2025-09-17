@@ -162,13 +162,13 @@ export class UpdateTaskUseCase {
       updateData.status = status
 
       if (status === 'DONE') {
-        updateData.completedAt = completedAt ?? new Date()
+        updateData.completed_at = completedAt ?? new Date()
       }
     }
 
     if (completedAt !== undefined && !status) {
       if (task.status === 'DONE') {
-        updateData.completedAt = completedAt
+        updateData.completed_at = completedAt
       } else {
         throw new InvalidUpdateDataError()
       }
@@ -176,11 +176,11 @@ export class UpdateTaskUseCase {
 
     if (priority) updateData.priority = priority
 
-    if (dueDate !== undefined) updateData.dueDate = dueDate
+    if (dueDate !== undefined) updateData.due_date = dueDate
 
-    if (typeof isArchived === 'boolean') updateData.isArchived = isArchived
+    if (typeof isArchived === 'boolean') updateData.is_archived = isArchived
 
-    if (categoryId !== undefined) updateData.categoryId = categoryId
+    if (categoryId !== undefined) updateData.category_id = categoryId
 
     let updatedTask: Task
 
