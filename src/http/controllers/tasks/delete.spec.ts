@@ -1,6 +1,7 @@
 import request from 'supertest'
 import { app } from '@/app.ts'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { prisma } from '@/lib/prisma.ts'
 
 describe('Delete Task (E2E)', () => {
   let token: string
@@ -32,30 +33,31 @@ describe('Delete Task (E2E)', () => {
     futureDate.setMonth(futureDate.getMonth() + 1)
     futureDate.setHours(12, 0, 0, 0)
 
-    const createResponse = await request(app.server)
-      .post('/tasks')
-      .set('Authorization', `Bearer ${token}`)
-      .send({
+    const user = await prisma.user.findFirstOrThrow()
+
+    const task = await prisma.task.create({
+      data: {
         title: 'Study JavaScript Fundamentals',
         description: 'Learn basic JavaScript concepts',
         status: 'TODO',
         priority: 'HIGH',
-        dueDate: futureDate,
-      })
-
-    const id = createResponse.body.task.task.id
+        due_date: futureDate,
+        user_id: user.id,
+      },
+    })
 
     const response = await request(app.server)
-      .delete(`/tasks/${id}`)
+      .delete(`/tasks/${task.id}`)
       .set('Authorization', `Bearer ${token}`)
 
     expect(response.statusCode).toEqual(204)
 
-    // Verificar se foi realmente deletada
-    const getResponse = await request(app.server)
-      .get(`/tasks/${id}`)
-      .set('Authorization', `Bearer ${token}`)
+    const deletedTask = await prisma.task.findUnique({
+      where: {
+        id: task.id,
+      },
+    })
 
-    expect(getResponse.statusCode).toEqual(404)
+    expect(deletedTask).toBeNull()
   })
 })
