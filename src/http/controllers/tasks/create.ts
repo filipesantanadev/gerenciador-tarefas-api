@@ -32,7 +32,7 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
 
     const user_id = request.user.sub
 
-    const task = await createTaskUseCase.execute({
+    await createTaskUseCase.execute({
       title,
       description: description ?? '',
       status,
@@ -43,7 +43,7 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
       ...(tagIds ? { tagIds } : {}),
     })
 
-    return reply.status(201).send({ task })
+    return reply.status(201).send()
   } catch (error) {
     if (error instanceof z.ZodError) {
       return reply.status(400).send({

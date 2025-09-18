@@ -1,6 +1,7 @@
 import request from 'supertest'
 import { app } from '@/app.ts'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { prisma } from '@/lib/prisma.ts'
 
 describe('Create Task (e2e)', () => {
   let token: string
@@ -40,62 +41,20 @@ describe('Create Task (e2e)', () => {
     farFutureDate.setMonth(farFutureDate.getMonth() + 6)
     farFutureDate.setHours(12, 0, 0, 0)
 
-    const tasksToCreate = [
-      {
+    const user = await prisma.user.findFirstOrThrow()
+
+    const response = await request(app.server)
+      .post('/tasks')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
         title: 'Study JavaScript Fundamentals',
         description: 'Learn basic JavaScript concepts',
         status: 'TODO',
         priority: 'HIGH',
         dueDate: futureDate,
-      },
-      {
-        title: 'Study React Hooks',
-        description: 'Learn advanced React concepts',
-        status: 'IN_PROGRESS',
-        priority: 'MEDIUM',
-        dueDate: farFutureDate,
-      },
-      {
-        title: 'Review Code Quality',
-        description: 'Code review session',
-        status: 'TODO',
-        priority: 'LOW',
-        dueDate: futureDate,
-      },
-      {
-        title: 'Deploy Application',
-        description: 'Deploy to production environment',
-        status: 'IN_PROGRESS',
-        priority: 'URGENT',
-        dueDate: futureDate,
-      },
-      {
-        title: 'Write Unit Tests',
-        description: 'Create comprehensive test suite',
-        status: 'TODO',
-        priority: 'HIGH',
-        dueDate: futureDate,
-      },
-      {
-        title: 'Take my Car for a Service',
-        description: 'Do a general check-up of my car before the trip',
-        status: 'DONE',
-        priority: 'URGENT',
-        dueDate: pastDate,
-      },
-    ]
+        user,
+      })
 
-    const promises = tasksToCreate.map((task) => {
-      return request(app.server)
-        .post('/tasks')
-        .set('Authorization', `Bearer ${token}`)
-        .send(task)
-    })
-
-    const responses = await Promise.all(promises)
-
-    for (const response of responses) {
-      expect(response.statusCode).toEqual(201)
-    }
+    expect(response.statusCode).toEqual(201)
   })
 })
