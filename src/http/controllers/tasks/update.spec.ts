@@ -1,6 +1,7 @@
 import request from 'supertest'
 import { app } from '@/app.ts'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { prisma } from '@/lib/prisma.ts'
 
 describe('Update Task (E2E)', () => {
   let token: string
@@ -36,21 +37,21 @@ describe('Update Task (E2E)', () => {
     farFutureDate.setMonth(farFutureDate.getMonth() + 5)
     farFutureDate.setHours(8, 0, 0, 0)
 
-    const createResponse = await request(app.server)
-      .post('/tasks')
-      .set('Authorization', `Bearer ${token}`)
-      .send({
+    const user = await prisma.user.findFirstOrThrow()
+
+    const createdTask = await prisma.task.create({
+      data: {
         title: 'Study JavaScript Fundamentals',
         description: 'Learn basic JavaScript concepts',
         status: 'IN_PROGRESS',
         priority: 'HIGH',
-        dueDate: futureDate,
-      })
-
-    const id = createResponse.body.task.task.id
+        due_date: futureDate,
+        user_id: user.id,
+      },
+    })
 
     const response = await request(app.server)
-      .patch(`/tasks/${id}`)
+      .patch(`/tasks/${createdTask.id}`)
       .set('Authorization', `Bearer ${token}`)
       .send({
         title: 'Study TypeScript',

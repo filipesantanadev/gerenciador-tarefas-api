@@ -38,7 +38,7 @@ export async function update(request: FastifyRequest, reply: FastifyReply) {
 
     const user_id = request.user.sub
 
-    const task = await updateTaskUseCase.execute({
+    const result = await updateTaskUseCase.execute({
       id,
       ...(title && { title }),
       ...(description && { description }),
@@ -50,7 +50,7 @@ export async function update(request: FastifyRequest, reply: FastifyReply) {
       userId: user_id,
     })
 
-    return reply.status(200).send(task)
+    return reply.status(200).send(result)
   } catch (error) {
     if (error instanceof z.ZodError) {
       return reply.status(400).send({
