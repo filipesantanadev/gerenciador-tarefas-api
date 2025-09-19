@@ -5,6 +5,7 @@ import { list } from './list.ts'
 import { remove } from './delete.ts'
 import { update } from './update.ts'
 import { details } from './details.ts'
+import { status } from './status.ts'
 
 export async function tasksRoutes(app: FastifyInstance) {
   app.addHook('onRequest', verifyJWT)
@@ -13,5 +14,6 @@ export async function tasksRoutes(app: FastifyInstance) {
   app.get('/tasks', list)
   app.get('/tasks/:id', details)
   app.patch('/tasks/:id', update)
+  app.patch('/tasks/:id/status', status)
   app.delete('/tasks/:id', remove)
 }
