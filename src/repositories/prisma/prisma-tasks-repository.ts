@@ -55,19 +55,37 @@ export class PrismaTasksRepository implements TasksRepository {
         return task
       }
 
-      const updatedTask = await prisma.task.update({
-        where: {
-          id: taskId,
-        },
-        data: {
-          tags: {
-            connect: newTagIds.map((tagId) => ({ id: tagId })),
+      const updatedTask = await prisma.$transaction(async (tx) => {
+        // 1. Add tags to task
+        await tx.task.update({
+          where: { id: taskId },
+          data: {
+            tags: {
+              connect: newTagIds.map((tagId) => ({ id: tagId })),
+            },
           },
-        },
-        include: {
-          tags: true,
-          category: true,
-        },
+        })
+
+        // 2. Increment usage_count
+        await tx.tag.updateMany({
+          where: {
+            id: { in: newTagIds },
+          },
+          data: {
+            usage_count: {
+              increment: 1,
+            },
+          },
+        })
+
+        // 3. Reload task with updated tags
+        return await tx.task.findUnique({
+          where: { id: taskId },
+          include: {
+            tags: true,
+            category: true,
+          },
+        })
       })
 
       return updatedTask
