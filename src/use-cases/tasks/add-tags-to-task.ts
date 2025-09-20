@@ -9,7 +9,12 @@ import { UnauthorizedError } from '../errors/unauthorized-error.ts'
 interface AddTagsToTaskUseCaseRequest {
   taskId: string
   userId: string
-  tags: Array<{ id?: string; name?: string }>
+  tags: Array<{
+    id?: string
+    name?: string
+    description?: string
+    color?: string
+  }>
 }
 
 interface AddTagsToTaskUseCaseResponse {
@@ -68,6 +73,8 @@ export class AddTagsToTaskUseCase {
       if (!tag && tagInput.name) {
         tag = await this.tagsRepository.create({
           name: tagInput.name,
+          description: tagInput.description || null,
+          color: tagInput.color || '#6B7280',
           creator: {
             connect: { id: userId },
           },
