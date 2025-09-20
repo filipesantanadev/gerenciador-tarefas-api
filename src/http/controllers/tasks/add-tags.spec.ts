@@ -59,8 +59,6 @@ describe('Add Tags to Task (e2e)', () => {
         tags: [{ id: tag.id }, { name: 'Personal', color: '#2AF' }],
       })
 
-    console.log('Tags adicionadas:', response.body.task.tags)
-
     expect(response.statusCode).toEqual(200)
     expect(response.body.task.tags).toHaveLength(2)
     expect(response.body.task.tags[0].id).toEqual(tag.id)
