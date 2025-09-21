@@ -340,6 +340,8 @@ export class InMemoryTasksRepository implements TasksRepository {
       })
     }
 
+    const totalCount = tasks.length
+
     // Sorting
     tasks = tasks.sort((a, b) => {
       let comparison = 0
@@ -392,7 +394,7 @@ export class InMemoryTasksRepository implements TasksRepository {
       }),
     )
 
-    return tasksWithRelations
+    return { tasks: tasksWithRelations, totalCount }
   }
 
   async searchByText(params: SearchTasksParams) {

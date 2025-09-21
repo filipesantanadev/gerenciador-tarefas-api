@@ -206,7 +206,7 @@ export class PrismaTasksRepository implements TasksRepository {
 
   async findManyWithAdvanceFilters(
     params: AdvancedFilterParams,
-  ): Promise<TaskWithRelations[]> {
+  ): Promise<{ tasks: TaskWithRelations[]; totalCount: number }> {
     const {
       userId,
       query,
@@ -230,86 +230,94 @@ export class PrismaTasksRepository implements TasksRepository {
 
     const now = new Date()
 
-    const tasks = await prisma.task.findMany({
-      where: {
-        user_id: userId,
+    const whereClause: Prisma.TaskWhereInput = {
+      user_id: userId,
 
-        ...(!includeArchived && { is_archived: false }),
+      ...(!includeArchived && { is_archived: false }),
 
-        ...(query && {
-          OR: [
-            { title: { contains: query, mode: 'insensitive' } },
-            { description: { contains: query, mode: 'insensitive' } },
-          ],
+      ...(query && {
+        OR: [
+          { title: { contains: query, mode: 'insensitive' } },
+          { description: { contains: query, mode: 'insensitive' } },
+        ],
+      }),
+
+      ...(title && {
+        title: { contains: title, mode: 'insensitive' },
+      }),
+
+      ...(status && { status: status as TaskStatus }),
+      ...(categoryId && { category_id: categoryId }),
+      ...(priority && { priority: priority as Priority }),
+      ...(dueDate && { due_date: dueDate }),
+
+      ...(dueDateFrom && {
+        due_date: {
+          ...((dueDateTo || dueDate) && { lte: dueDateTo || dueDate }),
+          gte: dueDateFrom,
+        },
+      }),
+      ...(dueDateTo &&
+        !dueDateFrom && {
+          due_date: { lte: dueDateTo },
+        }),
+      ...(createdAfter && {
+        created_at: {
+          ...(createdBefore && { lte: createdBefore }),
+          gte: createdAfter,
+        },
+      }),
+      ...(createdBefore &&
+        !createdAfter && {
+          created_at: { lte: createdBefore },
         }),
 
-        ...(title && {
-          title: { contains: title, mode: 'insensitive' },
-        }),
+      ...(hasDescription !== undefined && {
+        description: hasDescription ? { not: null } : null,
+      }),
 
-        ...(status && { status: status as TaskStatus }),
-        ...(categoryId && { category_id: categoryId }),
-        ...(priority && { priority: priority as Priority }),
-        ...(dueDate && { due_date: dueDate }),
+      ...(overdue && {
+        due_date: {
+          lt: now,
+        },
+        status: {
+          not: 'COMPLETED' as TaskStatus,
+        },
+      }),
 
-        ...(dueDateFrom && {
-          due_date: {
-            ...((dueDateTo || dueDate) && { lte: dueDateTo || dueDate }),
-            gte: dueDateFrom,
-          },
-        }),
-        ...(dueDateTo &&
-          !dueDateFrom && {
-            due_date: { lte: dueDateTo },
-          }),
-        ...(createdAfter && {
-          created_at: {
-            ...(createdBefore && { lte: createdBefore }),
-            gte: createdAfter,
-          },
-        }),
-        ...(createdBefore &&
-          !createdAfter && {
-            created_at: { lte: createdBefore },
-          }),
-
-        ...(hasDescription !== undefined && {
-          description: hasDescription ? { not: null } : null,
-        }),
-
-        ...(overdue && {
-          due_date: {
-            lt: now,
-          },
-          status: {
-            not: 'COMPLETED' as TaskStatus,
-          },
-        }),
-
-        ...(tagIds &&
-          tagIds.length > 0 && {
-            tags: {
-              some: {
-                id: { in: tagIds },
-              },
+      ...(tagIds &&
+        tagIds.length > 0 && {
+          tags: {
+            some: {
+              id: { in: tagIds },
             },
-          }),
-      },
-      include: {
-        category: true,
-        tags: true,
-      },
-      take: 20,
-      skip: (page - 1) * 20,
-      orderBy: {
-        ...(orderBy === 'createdAt' && { created_at: order }),
-        ...(orderBy === 'dueDate' && { due_date: order }),
-        ...(orderBy === 'priority' && { priority: order }),
-        ...(orderBy === 'title' && { title: order }),
-      },
-    })
+          },
+        }),
+    }
 
-    return tasks
+    // Executar ambas as queries em paralelo usando transação
+    const [tasks, totalCount] = await prisma.$transaction([
+      prisma.task.findMany({
+        where: whereClause,
+        include: {
+          category: true,
+          tags: true,
+        },
+        take: 20,
+        skip: (page - 1) * 20,
+        orderBy: {
+          ...(orderBy === 'createdAt' && { created_at: order }),
+          ...(orderBy === 'dueDate' && { due_date: order }),
+          ...(orderBy === 'priority' && { priority: order }),
+          ...(orderBy === 'title' && { title: order }),
+        },
+      }),
+      prisma.task.count({
+        where: whereClause,
+      }),
+    ])
+
+    return { tasks, totalCount }
   }
 
   async searchByText(params: SearchTasksParams) {

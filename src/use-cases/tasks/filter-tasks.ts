@@ -83,14 +83,14 @@ export class FilterTasksUseCase {
       ...(overdue && { overdue }),
     }
 
-    const tasks =
+    const { tasks, totalCount } =
       await this.tasksRepository.findManyWithAdvanceFilters(advancedParams)
 
     const appliedFilters = this.buildAppliedFiltersList(request)
 
     return {
       tasks,
-      totalCount: tasks.length,
+      totalCount,
       appliedFilters,
     }
   }
