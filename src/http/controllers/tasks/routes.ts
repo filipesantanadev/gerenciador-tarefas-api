@@ -8,6 +8,7 @@ import { details } from './details.ts'
 import { status } from './status.ts'
 import { addTags } from './add-tags.ts'
 import { removeTag } from './remove-tags.ts'
+import { filter } from './filter.ts'
 
 export async function tasksRoutes(app: FastifyInstance) {
   app.addHook('onRequest', verifyJWT)
@@ -20,4 +21,5 @@ export async function tasksRoutes(app: FastifyInstance) {
   app.delete('/tasks/:id', remove)
   app.post('/tasks/:taskId/tags', addTags)
   app.delete('/tasks/:taskId/tags/:tagId', removeTag)
+  app.get('/tasks/filter', filter)
 }
