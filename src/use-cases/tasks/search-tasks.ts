@@ -12,6 +12,7 @@ interface SearchTasksUseCaseRequest {
 
 interface SearchTasksUseCaseResponse {
   tasks: TaskWithRelations[]
+  totalCount: number
 }
 
 export class SearchTasksUseCase {
@@ -22,19 +23,22 @@ export class SearchTasksUseCase {
     userId,
     page = 1,
   }: SearchTasksUseCaseRequest): Promise<SearchTasksUseCaseResponse> {
-    if (!query || query.trim().length < 2) {
-      return { tasks: [] }
+    const trimmedQuery = query?.trim()
+
+    if (!trimmedQuery || trimmedQuery.length < 2) {
+      return { tasks: [], totalCount: 0 }
     }
 
     const params: SearchTasksParams = {
       userId,
-      query: query.trim(),
+      query: trimmedQuery,
       page,
       includeArchived: false,
     }
 
-    const tasks = await this.tasksRepository.searchByText(params)
+    const { tasks, totalCount } =
+      await this.tasksRepository.searchByText(params)
 
-    return { tasks }
+    return { tasks, totalCount }
   }
 }

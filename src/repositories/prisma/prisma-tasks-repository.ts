@@ -204,9 +204,7 @@ export class PrismaTasksRepository implements TasksRepository {
     return tasks
   }
 
-  async findManyWithAdvanceFilters(
-    params: AdvancedFilterParams,
-  ): Promise<{ tasks: TaskWithRelations[]; totalCount: number }> {
+  async findManyWithAdvanceFilters(params: AdvancedFilterParams) {
     const {
       userId,
       query,
@@ -323,42 +321,46 @@ export class PrismaTasksRepository implements TasksRepository {
   async searchByText(params: SearchTasksParams) {
     const { userId, query, page = 1, includeArchived = false } = params
 
-    if (!query || query.trim().length < 2) {
-      return []
-    }
+    const searchTerm = query.toLowerCase().trim()
 
-    const tasks = (await prisma.task.findMany({
-      where: {
-        user_id: userId,
-
-        ...(!includeArchived && { is_archived: false }),
-
-        OR: [
-          { title: { contains: query, mode: 'insensitive' } },
-          { description: { contains: query, mode: 'insensitive' } },
-          {
-            category: {
+    const whereClause: Prisma.TaskWhereInput = {
+      user_id: userId,
+      ...(!includeArchived && { is_archived: false }),
+      OR: [
+        { title: { contains: query, mode: 'insensitive' } },
+        { description: { contains: query, mode: 'insensitive' } },
+        {
+          category: {
+            name: { contains: query, mode: 'insensitive' },
+          },
+        },
+        {
+          tags: {
+            some: {
               name: { contains: query, mode: 'insensitive' },
             },
           },
-          {
-            tags: {
-              some: {
-                name: { contains: query, mode: 'insensitive' },
-              },
-            },
-          },
-        ],
-      },
-      include: {
-        category: true,
-        tags: true,
-      },
-      take: 20,
-      skip: (page - 1) * 20,
-    })) as TaskWithRelations[]
+        },
+      ],
+    }
 
-    const searchTerm = query.toLowerCase().trim()
+    const [tasks, totalCount] = await prisma.$transaction([
+      prisma.task.findMany({
+        where: whereClause,
+        include: {
+          category: true,
+          tags: true,
+        },
+        take: 20,
+        skip: (page - 1) * 20,
+        orderBy: {
+          created_at: 'desc',
+        },
+      }),
+      prisma.task.count({
+        where: whereClause,
+      }),
+    ])
 
     const sortedTasks = tasks.sort((a, b) => {
       const aTitleMatch = a.title.toLowerCase().includes(searchTerm)
@@ -370,7 +372,7 @@ export class PrismaTasksRepository implements TasksRepository {
       return b.created_at.getTime() - a.created_at.getTime()
     })
 
-    return sortedTasks
+    return { tasks: sortedTasks as TaskWithRelations[], totalCount }
   }
 
   async delete(id: string) {

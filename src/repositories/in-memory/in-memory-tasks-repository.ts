@@ -400,9 +400,8 @@ export class InMemoryTasksRepository implements TasksRepository {
   async searchByText(params: SearchTasksParams) {
     const { userId, query, includeArchived = false, page = 1 } = params
 
-    if (!query || query.trim().length < 2) {
-      return []
-    }
+    // Full-text search simulation
+    const searchTerm = query.toLowerCase().trim()
 
     let tasks = this.items.filter((task) => task.user_id === userId)
 
@@ -410,16 +409,29 @@ export class InMemoryTasksRepository implements TasksRepository {
       tasks = tasks.filter((task) => !task.is_archived)
     }
 
-    // Full-text search simulation
-    const searchTerm = query.toLowerCase().trim()
-
     tasks = tasks.filter((task) => {
       const titleMatch = task.title.toLowerCase().includes(searchTerm)
       const descriptionMatch =
         task.description?.toLowerCase().includes(searchTerm) || false
 
-      return titleMatch || descriptionMatch
+      const category = this.categories.find(
+        (cat) => cat.id === task.category_id,
+      )
+      const categoryMatch =
+        category?.name.toLowerCase().includes(searchTerm) || false
+
+      const taskTagIds = this.taskTags
+        .filter((taskTag) => taskTag.taskId === task.id)
+        .map((taskTag) => taskTag.tagId)
+
+      const tagMatch = this.tags
+        .filter((tag) => taskTagIds.includes(tag.id))
+        .some((tag) => tag.name.toLowerCase().includes(searchTerm))
+
+      return titleMatch || descriptionMatch || categoryMatch || tagMatch
     })
+
+    const totalCount = tasks.length
 
     // Prioritize title matches over description matches
     tasks = tasks.sort((a, b) => {
@@ -436,9 +448,7 @@ export class InMemoryTasksRepository implements TasksRepository {
     // Pagination
     const pageSize = 20
     const startIndex = (page - 1) * pageSize
-    const endIndex = startIndex + pageSize
-
-    const paginatedTasks = tasks.slice(startIndex, endIndex)
+    const paginatedTasks = tasks.slice(startIndex, startIndex + pageSize)
 
     // Include relations
     const tasksWithRelations: TaskWithRelations[] = paginatedTasks.map(
@@ -453,7 +463,7 @@ export class InMemoryTasksRepository implements TasksRepository {
       }),
     )
 
-    return tasksWithRelations
+    return { tasks: tasksWithRelations, totalCount }
   }
 
   async delete(id: string) {
