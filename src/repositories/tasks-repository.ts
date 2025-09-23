@@ -74,7 +74,9 @@ export interface TasksRepository {
   findManyWithAdvanceFilters(
     params: AdvancedFilterParams,
   ): Promise<{ tasks: TaskWithRelations[]; totalCount: number }>
-  searchByText(params: SearchTasksParams): Promise<TaskWithRelations[]>
+  searchByText(
+    params: SearchTasksParams,
+  ): Promise<{ tasks: TaskWithRelations[]; totalCount: number }>
   delete(id: string): Promise<Task | null>
   update(id: string, data: Prisma.TaskUpdateInput): Promise<Task>
   updateWithTags(
