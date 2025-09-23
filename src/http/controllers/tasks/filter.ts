@@ -10,10 +10,10 @@ const filterTasksQuerySchema = z.object({
   priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).optional(),
   tagIds: z.union([z.string().uuid(), z.array(z.string().uuid())]).optional(),
 
-  dueDateFrom: z.string().date('Invalid date format (YYYY-MM-DD)').optional(),
-  dueDateTo: z.string().date('Invalid date format (YYYY-MM-DD)').optional(),
-  createdAfter: z.string().date('Invalid date format (YYYY-MM-DD)').optional(),
-  createdBefore: z.string().date('Invalid date format (YYYY-MM-DD)').optional(),
+  dueDateFrom: z.coerce.date().optional(),
+  dueDateTo: z.coerce.date().optional(),
+  createdAfter: z.coerce.date().optional(),
+  createdBefore: z.coerce.date().optional(),
 
   includeArchived: z
     .enum(['true', 'false'])
