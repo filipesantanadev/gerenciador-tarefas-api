@@ -109,7 +109,10 @@ describe('Delete Category Use Case', () => {
       userId: 'user-1',
     })
 
-    const category = await categoriesRepository.findById('category-1')
-    expect(category).toBeNull()
+    const tasksAfterDeletion = await tasksRepository.findManyByCategoryId(
+      'category-1',
+      1,
+    )
+    expect(tasksAfterDeletion).toEqual([])
   })
 })
