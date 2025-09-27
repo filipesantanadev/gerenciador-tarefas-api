@@ -3,7 +3,6 @@ import type { CategoriesRepository } from '@/repositories/categories-repository.
 import type { UsersRepository } from '@/repositories/users-repository.ts'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
 import type { TasksRepository } from '@/repositories/tasks-repository.ts'
-import { InvalidDeleteDataError } from '../errors/invalid-delete-data-error.ts'
 import { UnauthorizedError } from '../errors/unauthorized-error.ts'
 
 interface DeleteCategoryUseCaseRequest {
@@ -44,8 +43,7 @@ export class DeleteCategoryUseCase {
 
     const hasAnyTasks = await this.tasksRepository.existsByCategoryId(id)
     if (hasAnyTasks) {
-      // TODO: Implementar depois o 'Soft Delete' ou 'Reatribuição de Tarefas'
-      throw new InvalidDeleteDataError()
+      await this.tasksRepository.updateCategoryToNull(id)
     }
 
     const deletedCategory = await this.categoriesRepository.delete(id)

@@ -78,6 +78,7 @@ export interface TasksRepository {
     params: SearchTasksParams,
   ): Promise<{ tasks: TaskWithRelations[]; totalCount: number }>
   delete(id: string): Promise<Task | null>
+  updateCategoryToNull(categoryId: string): Promise<void>
   update(id: string, data: Prisma.TaskUpdateInput): Promise<Task>
   updateWithTags(
     id: string,

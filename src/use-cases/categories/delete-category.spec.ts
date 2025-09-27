@@ -5,7 +5,6 @@ import { InMemoryCategoriesRepository } from '@/repositories/in-memory/in-memory
 import { DeleteCategoryUseCase } from './delete-category.ts'
 import { InMemoryTasksRepository } from '@/repositories/in-memory/in-memory-tasks-repository.ts'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts'
-import { InvalidDeleteDataError } from '../errors/invalid-delete-data-error.ts'
 import { UnauthorizedError } from '../errors/unauthorized-error.ts'
 
 let usersRepository: InMemoryUsersRepository
@@ -82,7 +81,7 @@ describe('Delete Category Use Case', () => {
     ).rejects.toBeInstanceOf(UnauthorizedError)
   })
 
-  it('should not be able to delete category if category has tasks using this categories', async () => {
+  it('should delete category and reassign tasks to uncategorized when category has tasks', async () => {
     await tasksRepository.create({
       id: 'task-1',
       title: 'Study JavaScript',
@@ -94,11 +93,23 @@ describe('Delete Category Use Case', () => {
       category_id: 'category-1',
     })
 
-    await expect(() =>
-      sut.execute({
-        id: 'category-1',
-        userId: 'user-1',
-      }),
-    ).rejects.toBeInstanceOf(InvalidDeleteDataError)
+    await tasksRepository.create({
+      id: 'task-2',
+      title: 'Study React',
+      description: 'Study React for Interview',
+      status: 'IN_PROGRESS',
+      priority: 'URGENT',
+      due_date: new Date(),
+      user_id: 'user-1',
+      category_id: 'category-1',
+    })
+
+    await sut.execute({
+      id: 'category-1',
+      userId: 'user-1',
+    })
+
+    const category = await categoriesRepository.findById('category-1')
+    expect(category).toBeNull()
   })
 })

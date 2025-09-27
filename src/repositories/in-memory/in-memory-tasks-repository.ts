@@ -488,6 +488,12 @@ export class InMemoryTasksRepository implements TasksRepository {
     return updatedTask
   }
 
+  async updateCategoryToNull(categoryId: string) {
+    this.items = this.items.map((task) =>
+      task.category_id === categoryId ? { ...task, category_id: null } : task,
+    )
+  }
+
   async update(id: string, data: TaskUpdateData) {
     const taskIndex = this.items.findIndex((item) => item.id === id)
 

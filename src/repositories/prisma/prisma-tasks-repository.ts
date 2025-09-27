@@ -384,6 +384,13 @@ export class PrismaTasksRepository implements TasksRepository {
     return task
   }
 
+  async updateCategoryToNull(categoryId: string) {
+    await prisma.task.updateMany({
+      where: { category_id: categoryId },
+      data: { category_id: null },
+    })
+  }
+
   async update(id: string, data: Prisma.TaskUpdateInput) {
     const task = await prisma.task.update({
       where: {
