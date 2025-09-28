@@ -4,10 +4,12 @@ import { fetchTasksByCategory } from './fetch-by-category.ts'
 import { create } from './create.ts'
 import { remove } from './delete.ts'
 import { update } from './update.ts'
+import { list } from './list.ts'
 
 export async function categoriesRoutes(app: FastifyInstance) {
   app.addHook('onRequest', verifyJWT)
 
+  app.get('/categories', list)
   app.post('/categories', create)
   app.patch('/categories/:id', update)
   app.delete('/categories/:id', remove)
