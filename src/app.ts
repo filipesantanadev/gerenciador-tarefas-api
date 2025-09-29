@@ -5,6 +5,7 @@ import { env } from './env/index.ts'
 import fastifyJwt from '@fastify/jwt'
 import { tasksRoutes } from './http/controllers/tasks/routes.ts'
 import { categoriesRoutes } from './http/controllers/categories/routes.ts'
+import { tagsRoutes } from './http/controllers/tags/routes.ts'
 
 export const app = fastify()
 
@@ -15,6 +16,7 @@ app.register(fastifyJwt, {
 app.register(usersRoutes)
 app.register(tasksRoutes)
 app.register(categoriesRoutes)
+app.register(tagsRoutes)
 
 app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError) {
