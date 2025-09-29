@@ -6,6 +6,7 @@ export interface TagsRepository {
   findByName(name: string): Promise<Tag | null>
   findManyByIds(ids: string[]): Promise<Tag[]>
   findManyByName(name: string, page: number): Promise<Tag[]>
+  delete(id: string): Promise<Tag | null>
   update(id: string, data: Prisma.TagUpdateInput): Promise<Tag>
   create(data: Prisma.TagCreateInput): Promise<Tag>
 }

@@ -51,6 +51,17 @@ export class InMemoryTagsRepository implements TagsRepository {
     return tag || null
   }
 
+  async delete(id: string) {
+    const tagToRemove = this.items.find((item) => item.id === id)
+
+    if (!tagToRemove) {
+      return null
+    }
+
+    this.items = this.items.filter((item) => item.id !== id)
+    return tagToRemove
+  }
+
   async update(id: string, data: Prisma.TagUpdateInput) {
     const tagIndex = this.items.findIndex((item) => item.id === id)
 
