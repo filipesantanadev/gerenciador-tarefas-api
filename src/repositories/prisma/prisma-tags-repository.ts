@@ -51,6 +51,15 @@ export class PrismaTagsRepository implements TagsRepository {
     return tags
   }
 
+  async delete(id: string) {
+    const tag = await prisma.tag.delete({
+      where: {
+        id,
+      },
+    })
+    return tag
+  }
+
   async update(id: string, data: Prisma.TagUpdateInput) {
     const tag = await prisma.tag.update({
       where: { id },
