@@ -13,7 +13,7 @@ export interface TagsRepository {
   findByNameAndUserId(name: string, userId: string): Promise<Tag | null>
   findByName(name: string): Promise<Tag | null>
   findManyByIds(ids: string[]): Promise<Tag[]>
-  findManyByName(name: string, page: number): Promise<Tag[]>
+  findManyByName(name: string): Promise<Tag[]>
   findMany(params: FindManyOptions): Promise<Tag[]>
   delete(id: string): Promise<Tag | null>
   update(id: string, data: Prisma.TagUpdateInput): Promise<Tag>

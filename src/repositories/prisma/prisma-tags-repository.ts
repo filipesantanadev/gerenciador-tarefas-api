@@ -66,13 +66,11 @@ export class PrismaTagsRepository implements TagsRepository {
     return tags
   }
 
-  async findManyByName(name: string, page: number) {
+  async findManyByName(name: string) {
     const tags = await prisma.tag.findMany({
       where: {
         name,
       },
-      take: 20,
-      skip: (page - 1) * 20,
     })
     return tags
   }

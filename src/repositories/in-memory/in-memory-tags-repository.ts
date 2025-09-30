@@ -68,10 +68,8 @@ export class InMemoryTagsRepository implements TagsRepository {
     return filteredTags.slice(startIndex, endIndex)
   }
 
-  async findManyByName(name: string, page: number) {
-    const tag = this.items
-      .filter((item) => item.name.includes(name))
-      .slice((page - 1) * 20, page * 20)
+  async findManyByName(name: string) {
+    const tag = this.items.filter((item) => item.name.includes(name))
 
     return tag
   }
