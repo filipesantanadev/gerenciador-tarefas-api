@@ -1,5 +1,5 @@
 import type { Prisma, Tag } from 'generated/prisma/index.js'
-import type { TagsRepository } from '../tags-repository.ts'
+import type { FindManyOptions, TagsRepository } from '../tags-repository.ts'
 import { randomUUID } from 'node:crypto'
 import { ResourceNotFoundError } from '@/use-cases/errors/resource-not-found-error.ts'
 
@@ -33,6 +33,39 @@ export class InMemoryTagsRepository implements TagsRepository {
     const items = this.items.filter((item) => ids.includes(item.id))
 
     return items
+  }
+
+  async findMany(params: FindManyOptions) {
+    const { userId, page = 1, search, sortBy = 'name', order = 'asc' } = params
+
+    let filteredTags = [...this.items]
+
+    if (userId) {
+      filteredTags = filteredTags.filter((tag) => tag.created_by === userId)
+    }
+
+    if (search) {
+      filteredTags = filteredTags.filter((tag) =>
+        tag.name.toLowerCase().includes(search.toLowerCase()),
+      )
+    }
+
+    filteredTags.sort((a, b) => {
+      let comparison = 0
+
+      if (sortBy === 'name') {
+        comparison = a.name.localeCompare(b.name)
+      } else if (sortBy === 'created_at') {
+        comparison = a.created_at.getTime() - b.created_at.getTime()
+      }
+
+      return order === 'asc' ? comparison : -comparison
+    })
+
+    const startIndex = (page - 1) * 20
+    const endIndex = startIndex + 20
+
+    return filteredTags.slice(startIndex, endIndex)
   }
 
   async findManyByName(name: string, page: number) {
