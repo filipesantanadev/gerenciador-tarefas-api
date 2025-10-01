@@ -13,7 +13,17 @@ export class PrismaCommentsRepository implements CommentsRepository {
   async findManyByTaskId(taskId: string) {
     const comments = await prisma.comment.findMany({
       where: { task_id: taskId },
-      include: { user: true },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
     })
     return comments
   }

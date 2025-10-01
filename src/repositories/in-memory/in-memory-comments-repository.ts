@@ -45,10 +45,19 @@ export class InMemoryCommentsRepository implements CommentsRepository {
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       )
-      .map((comment) => ({
-        ...comment,
-        user: this.users.find((user) => user.id === comment.user_id) || null,
-      }))
+      .map((comment) => {
+        const user = this.users.find((u) => u.id === comment.user_id)
+
+        return {
+          ...comment,
+          user: user
+            ? {
+                id: user.id,
+                name: user.name,
+              }
+            : null,
+        }
+      })
 
     return comments
   }
