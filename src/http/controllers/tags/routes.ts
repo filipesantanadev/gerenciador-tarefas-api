@@ -3,6 +3,7 @@ import { verifyJWT } from '@/http/middlewares/verify-jwt.ts'
 import { create } from './create.ts'
 import { list } from './list.ts'
 import { update } from './update.ts'
+import { remove } from './delete.ts'
 
 export async function tagsRoutes(app: FastifyInstance) {
   app.addHook('onRequest', verifyJWT)
@@ -10,4 +11,5 @@ export async function tagsRoutes(app: FastifyInstance) {
   app.post('/tags', create)
   app.get('/tags', list)
   app.patch('/tags/:id', update)
+  app.delete('/tags/:id', remove)
 }
