@@ -64,6 +64,7 @@ export interface TasksRepository {
   removeTag(taskId: string, tagId: string): Promise<Task | null>
   addTags(taskId: string, tagIds: string[]): Promise<Task | null>
   existsByCategoryId(categoryId: string): Promise<boolean>
+  findAll(): Promise<TaskWithRelations[]>
   findById(id: string): Promise<Task | null>
   findManyByCategoryId(
     categoryId: string,

@@ -102,6 +102,10 @@ export class InMemoryTasksRepository implements TasksRepository {
     return taskExists
   }
 
+  async findAll() {
+    return this.items.map((task) => this.populateTaskRelations(task))
+  }
+
   async findById(id: string) {
     const task = this.items.find((item) => item.id === id)
 
