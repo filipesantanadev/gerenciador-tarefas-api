@@ -3,6 +3,7 @@ import { usersRoutes } from './http/controllers/users/routes.ts'
 import { ZodError } from 'zod'
 import { env } from './env/index.ts'
 import fastifyJwt from '@fastify/jwt'
+import fastifyCookie from '@fastify/cookie'
 import { tasksRoutes } from './http/controllers/tasks/routes.ts'
 import { categoriesRoutes } from './http/controllers/categories/routes.ts'
 import { tagsRoutes } from './http/controllers/tags/routes.ts'
@@ -12,7 +13,16 @@ export const app = fastify()
 
 app.register(fastifyJwt, {
   secret: env.JWT_SECRET,
+  cookie: {
+    cookieName: 'refreshToken',
+    signed: false,
+  },
+  sign: {
+    expiresIn: '10m',
+  },
 })
+
+app.register(fastifyCookie)
 
 app.register(usersRoutes)
 app.register(tasksRoutes)
