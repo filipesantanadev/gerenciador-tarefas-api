@@ -128,6 +128,11 @@ export class InMemoryTasksRepository implements TasksRepository {
       .map((task) => this.populateTaskRelations(task))
   }
 
+  async findAllByUserId(userId: string) {
+    const tasks = this.items.filter((task) => task.user_id === userId)
+    return tasks.map((task) => this.populateTaskRelations(task))
+  }
+
   async findMany(params: FindManyParams) {
     const {
       userId,
