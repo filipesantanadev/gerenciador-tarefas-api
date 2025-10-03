@@ -3,26 +3,11 @@ import { app } from '@/app.ts'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { prisma } from '@/lib/prisma.ts'
 import type { Task } from 'generated/prisma/index.js'
+import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user.ts'
 
 describe('Fetch Tasks by Category (E2E)', () => {
-  let token: string
-
   beforeAll(async () => {
     await app.ready()
-
-    await request(app.server).post('/users').send({
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      password: '123456',
-      confirmPassword: '123456',
-    })
-
-    const authResponse = await request(app.server).post('/sessions').send({
-      email: 'johndoe@example.com',
-      password: '123456',
-    })
-
-    token = authResponse.body.token
   })
 
   afterAll(async () => {
@@ -30,6 +15,8 @@ describe('Fetch Tasks by Category (E2E)', () => {
   })
 
   it('should be able to fetch tasks by category', async () => {
+    const { token } = await createAndAuthenticateUser(app)
+
     const pastDate = new Date()
     pastDate.setMonth(pastDate.getMonth() - 1)
     pastDate.setHours(12, 0, 0, 0)
