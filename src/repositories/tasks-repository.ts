@@ -70,6 +70,7 @@ export interface TasksRepository {
     page: number,
   ): Promise<TaskWithRelations[]>
   findManyByTagId(tagId: string, page: number): Promise<TaskWithRelations[]>
+  findAllByUserId(userId: string): Promise<TaskWithRelations[]>
   findMany(params: FindManyParams): Promise<TaskWithRelations[]>
   findManyWithAdvanceFilters(
     params: AdvancedFilterParams,
