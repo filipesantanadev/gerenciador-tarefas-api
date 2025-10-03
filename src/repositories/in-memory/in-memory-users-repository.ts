@@ -15,11 +15,11 @@ export class InMemoryUsersRepository implements UsersRepository {
   }
 
   async findByEmail(email: string) {
-    const user = this.items.find((item) => item.email === email)
+    const user = this.items.find(
+      (item) => item.email.toLowerCase() === email.toLowerCase(),
+    )
 
-    if (!user) return null
-
-    return user
+    return user ?? null
   }
 
   async update(id: string, data: Prisma.UserUpdateInput) {
