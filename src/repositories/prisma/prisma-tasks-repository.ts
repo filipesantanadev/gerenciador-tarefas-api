@@ -427,6 +427,16 @@ export class PrismaTasksRepository implements TasksRepository {
     return task !== null
   }
 
+  async findAll() {
+    const tasks = await prisma.task.findMany({
+      orderBy: {
+        created_at: 'desc',
+      },
+    })
+
+    return tasks
+  }
+
   async updateWithTags(
     id: string,
     data: Prisma.TaskUpdateInput,
