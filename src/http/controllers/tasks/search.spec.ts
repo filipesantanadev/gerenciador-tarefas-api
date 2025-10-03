@@ -1,26 +1,11 @@
 import request from 'supertest'
 import { app } from '@/app.ts'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user.ts'
 
 describe('Search Tasks (E2E)', () => {
-  let token: string
-
   beforeAll(async () => {
     await app.ready()
-
-    await request(app.server).post('/users').send({
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      password: '123456',
-      confirmPassword: '123456',
-    })
-
-    const authResponse = await request(app.server).post('/sessions').send({
-      email: 'johndoe@example.com',
-      password: '123456',
-    })
-
-    token = authResponse.body.token
   })
 
   afterAll(async () => {
@@ -28,6 +13,8 @@ describe('Search Tasks (E2E)', () => {
   })
 
   it('should be able to search tasks', async () => {
+    const { token } = await createAndAuthenticateUser(app)
+
     const pastDate = new Date()
     pastDate.setMonth(pastDate.getMonth() - 1)
     pastDate.setHours(12, 0, 0, 0)
