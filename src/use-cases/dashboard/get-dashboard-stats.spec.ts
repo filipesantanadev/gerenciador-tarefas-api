@@ -42,7 +42,7 @@ describe('Get Dashboard Stats Use Case', () => {
       user_id: userId,
     })
 
-    const stats = await sut.execute({ userId })
+    const { stats } = await sut.execute({ userId })
 
     expect(stats.totalTasks).toBe(4)
     expect(stats.tasksByStatus.todo).toBe(1)
@@ -84,14 +84,14 @@ describe('Get Dashboard Stats Use Case', () => {
       user_id: userId,
     })
 
-    const stats = await sut.execute({ userId })
+    const { stats } = await sut.execute({ userId })
 
     expect(stats.overdueTasks).toBe(1)
     expect(stats.totalTasks).toBe(3)
   })
 
   it('should return zero stats when user has no tasks', async () => {
-    const stats = await sut.execute({ userId: 'user-without-tasks' })
+    const { stats } = await sut.execute({ userId: 'user-without-tasks' })
 
     expect(stats.totalTasks).toBe(0)
     expect(stats.tasksByStatus.todo).toBe(0)
@@ -119,7 +119,7 @@ describe('Get Dashboard Stats Use Case', () => {
       user_id: userId,
     })
 
-    const stats = await sut.execute({ userId })
+    const { stats } = await sut.execute({ userId })
 
     expect(stats.completionRate).toBe(100)
     expect(stats.totalTasks).toBe(2)
@@ -141,7 +141,7 @@ describe('Get Dashboard Stats Use Case', () => {
       user_id: 'user-2',
     })
 
-    const stats = await sut.execute({ userId: 'user-1' })
+    const { stats } = await sut.execute({ userId: 'user-1' })
 
     expect(stats.totalTasks).toBe(1)
     expect(stats.tasksByStatus.todo).toBe(1)
@@ -161,7 +161,7 @@ describe('Get Dashboard Stats Use Case', () => {
       user_id: userId,
     })
 
-    const stats = await sut.execute({ userId })
+    const { stats } = await sut.execute({ userId })
 
     expect(stats.overdueTasks).toBe(0)
     expect(stats.tasksByStatus.cancelled).toBe(1)
